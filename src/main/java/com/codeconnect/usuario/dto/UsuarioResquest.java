@@ -1,4 +1,4 @@
-package com.codeconnect.dto;
+package com.codeconnect.usuario.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

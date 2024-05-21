@@ -1,4 +1,4 @@
-package com.codeconnect.model;
+package com.codeconnect.usuario.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

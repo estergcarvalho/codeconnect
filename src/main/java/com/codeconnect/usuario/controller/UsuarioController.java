@@ -1,8 +1,8 @@
-package com.codeconnect.controller;
+package com.codeconnect.usuario.controller;
 
-import com.codeconnect.service.UsuarioService;
-import com.codeconnect.dto.UsuarioResponse;
-import com.codeconnect.dto.UsuarioResquest;
+import com.codeconnect.usuario.service.UsuarioService;
+import com.codeconnect.usuario.dto.UsuarioResponse;
+import com.codeconnect.usuario.dto.UsuarioResquest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

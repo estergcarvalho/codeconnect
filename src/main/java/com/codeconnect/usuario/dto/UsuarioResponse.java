@@ -1,4 +1,4 @@
-package com.codeconnect.dto;
+package com.codeconnect.usuario.dto;
 
 import lombok.Builder;
 import lombok.Getter;

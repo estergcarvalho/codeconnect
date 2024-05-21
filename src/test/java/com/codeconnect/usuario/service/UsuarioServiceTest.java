@@ -1,17 +1,15 @@
 package com.codeconnect.usuario.service;
 
-import com.codeconnect.dto.UsuarioResponse;
-import com.codeconnect.dto.UsuarioResquest;
-import com.codeconnect.model.Usuario;
-import com.codeconnect.repository.UsuarioRepository;
-import com.codeconnect.service.UsuarioService;
+import com.codeconnect.usuario.dto.UsuarioResponse;
+import com.codeconnect.usuario.dto.UsuarioResquest;
+import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.repository.UsuarioRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.UUID;
@@ -37,7 +35,7 @@ public class UsuarioServiceTest {
 
     @Test
     @DisplayName("Deve cadastrar usuário")
-    public void deveCadastrarUsuario(){
+    public void deveCadastrarUsuario() {
         UsuarioResquest usuarioRequest = UsuarioResquest.builder()
             .nome(NOME_USUARIO)
             .email(EMAIL_USUARIO)
