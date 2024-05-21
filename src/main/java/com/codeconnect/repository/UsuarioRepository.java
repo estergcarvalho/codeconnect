@@ -1,6 +1,6 @@
-package com.codeconnect.usuario.repository;
+package com.codeconnect.repository;
 
-import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

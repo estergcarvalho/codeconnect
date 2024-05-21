@@ -1,10 +1,10 @@
-package com.codeconnect.usuario.model;
+package com.codeconnect.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,6 +20,9 @@ public class Usuario {
     private UUID id;
 
     private String nome;
+
+    @Email
     private String email;
+
     private String senha;
 }
