@@ -1,6 +1,6 @@
 package com.codeconnect.security.exception;
 
-public class TokenInvalidoException extends Exception {
+public class TokenInvalidoException extends RuntimeException {
 
     public TokenInvalidoException() {
         super("Token invalido");
