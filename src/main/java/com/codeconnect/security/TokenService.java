@@ -23,8 +23,6 @@ public class TokenService {
         try {
             var assinatura = Algorithm.HMAC256(tokenSenha);
 
-            log.info("Algoritmo de assinatura criado com sucesso");
-
             var token = JWT.create()
                 .withIssuer(EMISSOR)
                 .withSubject(usuario.getUsername())
@@ -45,8 +43,6 @@ public class TokenService {
 
         try {
             var assinatura = Algorithm.HMAC256(tokenSenha);
-
-            log.info("Assinatura criada com sucesso.");
 
             var assunto = JWT.require(assinatura)
                 .withIssuer(EMISSOR)
