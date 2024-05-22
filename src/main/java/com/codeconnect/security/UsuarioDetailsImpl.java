@@ -1,4 +1,4 @@
-package com.codeconnect.usuario.security;
+package com.codeconnect.security;
 
 import com.codeconnect.usuario.model.Usuario;
 import lombok.Getter;
@@ -11,7 +11,11 @@ import java.util.Collection;
 @Getter
 public class UsuarioDetailsImpl implements UserDetails {
 
-    private Usuario usuario;
+    private final Usuario usuario;
+
+    public UsuarioDetailsImpl(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
