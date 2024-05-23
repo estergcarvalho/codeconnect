@@ -27,7 +27,7 @@ public class SecurityConfig {
     private SecurityFilter securityFilter;
 
     @Bean
-    public SecurityFilterChain filtroDeSegurancaChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filtroDeSegurancaChain(HttpSecurity httpSecurity) {
         try {
             log.info("Iniciando configuracao da cadeia de filtros de segurança");
 
