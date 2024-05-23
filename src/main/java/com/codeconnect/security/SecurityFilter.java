@@ -44,8 +44,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
                 log.info("Autenticação realizada com sucesso");
             }
-            filterChain.doFilter(request, response);
             
+            filterChain.doFilter(request, response);
         } catch (Exception exception) {
             throw new ErroAoAutenticarUsuarioException();
         }
