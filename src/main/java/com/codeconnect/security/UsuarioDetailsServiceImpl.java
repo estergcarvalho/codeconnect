@@ -18,12 +18,11 @@ public class UsuarioDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        log.info("Tentando carregar usuário pelo nome de usuário: {}", username);
-
         Usuario usuario = usuarioRepository.findByEmail(username)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
         log.info("Usuário encontrado: {}", username);
+
         return new UsuarioDetailsImpl(usuario);
     }
 

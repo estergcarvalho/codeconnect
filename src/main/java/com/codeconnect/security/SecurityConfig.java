@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,16 +27,17 @@ public class SecurityConfig {
     private SecurityFilter securityFilter;
 
     @Bean
-    public SecurityFilterChain filtroDeSegurancaChain(HttpSecurity httpSecurity) {
+    public SecurityFilterChain filtroDeSegurancaChain(HttpSecurity httpSecurity) throws Exception {
         try {
             log.info("Iniciando configuracao da cadeia de filtros de segurança");
 
             SecurityFilterChain filtroDeSeguranca = httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autorizacaoRequisicoes -> {
                     autorizacaoRequisicoes.requestMatchers("/login").permitAll();
+                    autorizacaoRequisicoes.anyRequest().authenticated();
                 })
+                .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
@@ -43,15 +45,19 @@ public class SecurityConfig {
 
             return filtroDeSeguranca;
         } catch (Exception e) {
+            log.error(e.getMessage());
+
             throw new ErroConfiguracaoSegurancaException();
         }
     }
 
     @Bean
-    public AuthenticationManager gerenciadorDeAutenticacao(AuthenticationConfiguration configuracao) {
+    public AuthenticationManager gerenciadorDeAutenticacao(AuthenticationConfiguration configuracao) throws Exception {
         try {
             return configuracao.getAuthenticationManager();
         } catch (Exception e) {
+            log.error(e.getMessage());
+
             throw new ErroGerenciamentoDeAutenticaoException();
         }
     }

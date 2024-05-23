@@ -35,7 +35,8 @@ public class SecurityFilter extends OncePerRequestFilter {
             if (tokenJwt != null) {
                 String assunto = tokenService.obterAssuntoDoToken(tokenJwt);
 
-                Usuario usuario = usuarioRepository.findByEmail(assunto).orElseThrow(UsuarioNaoEncontradoException::new);
+                Usuario usuario = usuarioRepository.findByEmail(assunto)
+                    .orElseThrow(UsuarioNaoEncontradoException::new);
 
                 UsuarioDetailsImpl usuarioDetalhe = new UsuarioDetailsImpl(usuario);
                 UsernamePasswordAuthenticationToken autenticacao = new UsernamePasswordAuthenticationToken(usuarioDetalhe, null, usuarioDetalhe.getAuthorities());
@@ -47,24 +48,22 @@ public class SecurityFilter extends OncePerRequestFilter {
             
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
+            log.error("Erro ao autenticar usuário: {}", exception.getMessage());
+
             throw new ErroAoAutenticarUsuarioException();
         }
     }
 
     private String recuperarToken(HttpServletRequest request) {
-        try {
-            var autorizacao = request.getHeader("Authorization");
+        var autorizacao = request.getHeader("Authorization");
 
-            if (autorizacao != null) {
-                return autorizacao.replace("Bearer ", "");
-            }
-
-            log.info("Cabeçalho 'Authorization' não encontrado ou vazio.");
-
-            return null;
-        } catch (Exception exception) {
-            throw new ErroAoRecuperarTokenExpection();
+        if (autorizacao != null) {
+            return autorizacao.replace("Bearer ", "");
         }
+
+        log.error("Cabeçalho 'Authorization' não encontrado ou vazio.");
+
+        return null;
     }
 
 }
