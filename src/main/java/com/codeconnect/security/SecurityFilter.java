@@ -45,6 +45,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 log.info("Autenticação realizada com sucesso");
             }
             filterChain.doFilter(request, response);
+            
         } catch (Exception exception) {
             throw new ErroAoAutenticarUsuarioException();
         }
@@ -55,7 +56,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             var autorizacao = request.getHeader("Authorization");
 
             if (autorizacao != null) {
-                return autorizacao.replace("Bearer", "");
+                return autorizacao.replace("Bearer ", "");
             }
 
             log.info("Cabeçalho 'Authorization' não encontrado ou vazio.");
