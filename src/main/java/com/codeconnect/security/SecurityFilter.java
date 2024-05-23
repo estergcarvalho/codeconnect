@@ -6,7 +6,6 @@ import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
 @Component
 @Slf4j
-public class SecurityFIlter extends OncePerRequestFilter {
+public class SecurityFilter extends OncePerRequestFilter {
 
     @Autowired
     private TokenService tokenService;
@@ -29,7 +26,7 @@ public class SecurityFIlter extends OncePerRequestFilter {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         try {
             log.info("Inicio filtrar requisicao");
 
@@ -51,7 +48,6 @@ public class SecurityFIlter extends OncePerRequestFilter {
         } catch (Exception exception) {
             throw new ErroAoAutenticarUsuarioException();
         }
-
     }
 
     private String recuperarToken(HttpServletRequest request) {
@@ -65,7 +61,6 @@ public class SecurityFIlter extends OncePerRequestFilter {
             log.info("Cabeçalho 'Authorization' não encontrado ou vazio.");
 
             return null;
-
         } catch (Exception exception) {
             throw new ErroAoRecuperarTokenExpection();
         }

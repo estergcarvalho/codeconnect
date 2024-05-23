@@ -17,14 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableWebSecurity
 @Slf4j
 public class SecurityConfig {
 
     @Autowired
-    private SecurityFIlter securityFIlter;
+    private SecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain filtroDeSegurancaChain(HttpSecurity httpSecurity) {
@@ -37,8 +36,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(autorizacaoRequisicoes -> {
                     autorizacaoRequisicoes.requestMatchers("/login").permitAll();
                 })
-                .addFilterBefore(securityFIlter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+
             log.info("Cadeia de filtros de segurança configurada com sucesso");
 
             return filtroDeSeguranca;
