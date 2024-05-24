@@ -1,5 +1,6 @@
-package com.codeconnect.security;
+package com.codeconnect.security.service;
 
+import com.codeconnect.security.model.UserDetailsImpl;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class UsuarioDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -23,7 +24,7 @@ public class UsuarioDetailsServiceImpl implements UserDetailsService {
 
         log.info("Usuário encontrado: {}", username);
 
-        return new UsuarioDetailsImpl(usuario);
+        return new UserDetailsImpl(usuario);
     }
 
 }

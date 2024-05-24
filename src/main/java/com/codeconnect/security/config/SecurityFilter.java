@@ -1,7 +1,8 @@
-package com.codeconnect.security;
+package com.codeconnect.security.config;
 
 import com.codeconnect.security.exception.ErroAoAutenticarUsuarioException;
-import com.codeconnect.security.exception.ErroAoRecuperarTokenExpection;
+import com.codeconnect.security.model.UserDetailsImpl;
+import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -33,12 +34,12 @@ public class SecurityFilter extends OncePerRequestFilter {
             var tokenJwt = recuperarToken(request);
 
             if (tokenJwt != null) {
-                String assunto = tokenService.obterAssuntoDoToken(tokenJwt);
+                String assunto = tokenService.validarToken(tokenJwt);
 
                 Usuario usuario = usuarioRepository.findByEmail(assunto)
                     .orElseThrow(UsuarioNaoEncontradoException::new);
 
-                UsuarioDetailsImpl usuarioDetalhe = new UsuarioDetailsImpl(usuario);
+                UserDetailsImpl usuarioDetalhe = new UserDetailsImpl(usuario);
                 UsernamePasswordAuthenticationToken autenticacao = new UsernamePasswordAuthenticationToken(usuarioDetalhe, null, usuarioDetalhe.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(autenticacao);
