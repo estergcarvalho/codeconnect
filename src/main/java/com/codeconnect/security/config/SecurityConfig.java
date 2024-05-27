@@ -1,4 +1,4 @@
-package com.codeconnect.security;
+package com.codeconnect.security.config;
 
 import com.codeconnect.security.exception.ErroConfiguracaoSegurancaException;
 import com.codeconnect.security.exception.ErroGerenciamentoDeAutenticaoException;
@@ -32,10 +32,11 @@ public class SecurityConfig {
 
             SecurityFilterChain filtroDeSeguranca = httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autorizacaoRequisicoes -> {
                     autorizacaoRequisicoes.requestMatchers("/login").permitAll();
+                    autorizacaoRequisicoes.anyRequest().authenticated();
                 })
+                .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
@@ -43,6 +44,8 @@ public class SecurityConfig {
 
             return filtroDeSeguranca;
         } catch (Exception e) {
+            log.error(e.getMessage());
+
             throw new ErroConfiguracaoSegurancaException();
         }
     }
@@ -52,6 +55,8 @@ public class SecurityConfig {
         try {
             return configuracao.getAuthenticationManager();
         } catch (Exception e) {
+            log.error(e.getMessage());
+
             throw new ErroGerenciamentoDeAutenticaoException();
         }
     }

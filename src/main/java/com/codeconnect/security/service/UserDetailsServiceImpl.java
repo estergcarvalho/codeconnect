@@ -1,5 +1,6 @@
-package com.codeconnect.security;
+package com.codeconnect.security.service;
 
+import com.codeconnect.security.model.UserDetailsImpl;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -11,20 +12,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class UsuarioDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        log.info("Tentando carregar usuário pelo nome de usuário: {}", username);
-
         Usuario usuario = usuarioRepository.findByEmail(username)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
         log.info("Usuário encontrado: {}", username);
-        return new UsuarioDetailsImpl(usuario);
+
+        return new UserDetailsImpl(usuario);
     }
 
 }

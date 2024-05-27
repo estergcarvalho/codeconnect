@@ -1,4 +1,4 @@
-package com.codeconnect.usuario.dto;
+package com.codeconnect.login.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioResquest {
-
-    @NotBlank(message = "Nome do usuario não deve ser nulo ou vazio")
-    private String nome;
+public class LoginRequest {
 
     @NotBlank(message = "E-mail do usuario não deve ser nulo ou vazio")
     private String email;

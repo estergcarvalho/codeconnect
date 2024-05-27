@@ -1,19 +1,18 @@
-package com.codeconnect.security;
+package com.codeconnect.security.model;
 
 import com.codeconnect.usuario.model.Usuario;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Getter
-public class UsuarioDetailsImpl implements UserDetails {
+
+public class UserDetailsImpl implements UserDetails {
 
     private final Usuario usuario;
 
-    public UsuarioDetailsImpl(Usuario usuario) {
+    public UserDetailsImpl(Usuario usuario) {
         this.usuario = usuario;
     }
 
@@ -24,12 +23,12 @@ public class UsuarioDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getUsuario().getSenha();
+        return usuario.getSenha();
     }
 
     @Override
     public String getUsername() {
-        return getUsuario().getEmail();
+        return usuario.getEmail();
     }
 
     @Override

@@ -1,9 +1,10 @@
-package com.codeconnect.security;
+package com.codeconnect.security.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.codeconnect.security.exception.ErroAoCriarTokenException;
-import com.codeconnect.security.exception.TokenInvalidoException;
+import com.codeconnect.security.exception.ErroTokenInvalidoException;
+import com.codeconnect.security.model.UserDetailsImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TokenService {
 
-    @Value("{api.security.token.secret}")
+    @Value("${api.security.token.secret}")
     private String tokenSenha;
 
     private static final String EMISSOR = "codeconnect-api";
 
-    public String gerarToken(UsuarioDetailsImpl usuario) {
+    public String gerarToken(UserDetailsImpl usuario) {
         log.info("Iniciando geração do token");
 
         try {
@@ -38,7 +39,7 @@ public class TokenService {
         }
     }
 
-    public String obterAssuntoDoToken(String token) {
+    public String validarToken(String token) {
         log.info("Iniciando a obtenção do assunto do token");
 
         try {
@@ -56,7 +57,7 @@ public class TokenService {
         } catch (Exception exception) {
             log.error("Erro ao obter o assunto do token");
 
-            throw new TokenInvalidoException();
+            throw new ErroTokenInvalidoException();
         }
     }
 

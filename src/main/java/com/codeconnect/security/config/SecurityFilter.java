@@ -1,7 +1,8 @@
-package com.codeconnect.security;
+package com.codeconnect.security.config;
 
 import com.codeconnect.security.exception.ErroAoAutenticarUsuarioException;
-import com.codeconnect.security.exception.ErroAoRecuperarTokenExpection;
+import com.codeconnect.security.model.UserDetailsImpl;
+import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -33,11 +34,12 @@ public class SecurityFilter extends OncePerRequestFilter {
             var tokenJwt = recuperarToken(request);
 
             if (tokenJwt != null) {
-                String assunto = tokenService.obterAssuntoDoToken(tokenJwt);
+                String assunto = tokenService.validarToken(tokenJwt);
 
-                Usuario usuario = usuarioRepository.findByEmail(assunto).orElseThrow(UsuarioNaoEncontradoException::new);
+                Usuario usuario = usuarioRepository.findByEmail(assunto)
+                    .orElseThrow(UsuarioNaoEncontradoException::new);
 
-                UsuarioDetailsImpl usuarioDetalhe = new UsuarioDetailsImpl(usuario);
+                UserDetailsImpl usuarioDetalhe = new UserDetailsImpl(usuario);
                 UsernamePasswordAuthenticationToken autenticacao = new UsernamePasswordAuthenticationToken(usuarioDetalhe, null, usuarioDetalhe.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(autenticacao);
@@ -47,24 +49,22 @@ public class SecurityFilter extends OncePerRequestFilter {
             
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
+            log.error("Erro ao autenticar usuário: {}", exception.getMessage());
+
             throw new ErroAoAutenticarUsuarioException();
         }
     }
 
     private String recuperarToken(HttpServletRequest request) {
-        try {
-            var autorizacao = request.getHeader("Authorization");
+        var autorizacao = request.getHeader("Authorization");
 
-            if (autorizacao != null) {
-                return autorizacao.replace("Bearer ", "");
-            }
-
-            log.info("Cabeçalho 'Authorization' não encontrado ou vazio.");
-
-            return null;
-        } catch (Exception exception) {
-            throw new ErroAoRecuperarTokenExpection();
+        if (autorizacao != null) {
+            return autorizacao.replace("Bearer ", "");
         }
+
+        log.error("Cabeçalho 'Authorization' não encontrado ou vazio.");
+
+        return null;
     }
 
 }
