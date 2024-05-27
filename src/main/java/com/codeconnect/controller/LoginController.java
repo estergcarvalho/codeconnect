@@ -1,4 +1,4 @@
-package com.codeconnect.login.controller;
+package com.codeconnect.controller;
 
 import com.codeconnect.login.dto.LoginRequest;
 import com.codeconnect.login.dto.LoginResponse;
