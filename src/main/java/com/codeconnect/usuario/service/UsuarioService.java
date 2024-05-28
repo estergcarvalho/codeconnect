@@ -2,7 +2,7 @@ package com.codeconnect.usuario.service;
 
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
-import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
+import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class UsuarioService {
         } catch (Exception e) {
             log.error("Erro ao cadastrar usuario: {}", e.getMessage());
 
-            throw new UsuarioNaoEncontradoException();
+            throw new ErroAoCadastrarUsuarioException();
         }
     }
 

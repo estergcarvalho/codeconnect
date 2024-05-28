@@ -44,7 +44,7 @@ public class UsuarioControllerTest {
     private static final UUID ID_USUARIO = UUID.randomUUID();
     private static final String NOME_USUARIO = "Teste";
     private static final String EMAIL_USUARIO = "teste@teste.com.br";
-    private static final String SENHA_USUARIO = "1234678";
+    private static final String SENHA_USUARIO = "$2y$10$9S9ivlvoxeZX8.UQx4PiReUle758Ux8py.Os.YACoQOaZtv6e0vdK";
 
     @Test
     @DisplayName("Deve cadastrar um usuário")
