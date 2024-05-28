@@ -2,6 +2,7 @@ package com.codeconnect.security.config;
 
 import com.codeconnect.security.exception.ErroConfiguracaoSegurancaException;
 import com.codeconnect.security.exception.ErroGerenciamentoDeAutenticaoException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,9 @@ public class SecurityConfig {
                 })
                 .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException)
+                    -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                )
                 .build();
 
             log.info("Cadeia de filtros de segurança configurada com sucesso");
