@@ -48,7 +48,7 @@ public class LoginControllerTest {
     private UsuarioRepository usuarioRepository;
 
     private static final String EMAIL_VALIDO = "teste@teste.com";
-    private static final String SENHA_VALIDA = "teste123";
+    private static final String SENHA_VALIDA = "$2y$10$9S9ivlvoxeZX8.UQx4PiReUle758Ux8py.Os.YACoQOaZtv6e0vdK";
 
     @Test
     @DisplayName("Deve autenticar o usuário e retornar o token")
