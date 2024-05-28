@@ -9,7 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.UUID;
@@ -27,6 +29,9 @@ public class UsuarioServiceTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private static final UUID ID_USUARIO = UUID.randomUUID();
     private static final String NOME_USUARIO = "Teste";
@@ -49,6 +54,7 @@ public class UsuarioServiceTest {
             .senha(SENHA_USUARIO)
             .build();
 
+        when(passwordEncoder.encode(usuarioRequest.getSenha())).thenReturn(SENHA_USUARIO);
         when(usuarioRepository.save(any())).thenReturn(usuario);
 
         UsuarioResponse usuarioResponse = usuarioService.cadastrar(usuarioRequest);
@@ -56,7 +62,6 @@ public class UsuarioServiceTest {
         assertEquals(ID_USUARIO, usuarioResponse.getId());
         assertEquals(NOME_USUARIO, usuarioResponse.getNome());
         assertEquals(EMAIL_USUARIO, usuarioResponse.getEmail());
-        assertEquals(SENHA_USUARIO, usuarioResponse.getSenha());
     }
 
 }

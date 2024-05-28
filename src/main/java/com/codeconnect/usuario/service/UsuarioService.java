@@ -7,6 +7,7 @@ import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,14 +17,19 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UsuarioResponse cadastrar(UsuarioResquest usuarioResquest) {
         log.info("Inicio cadastro usuario");
 
         try {
+            String senha = passwordEncoder.encode(usuarioResquest.getSenha());
+
             Usuario usuario = Usuario.builder()
                 .nome(usuarioResquest.getNome())
                 .email(usuarioResquest.getEmail())
-                .senha(usuarioResquest.getSenha())
+                .senha(senha)
                 .build();
 
             Usuario usuarioSalvo = usuarioRepository.save(usuario);
@@ -34,7 +40,6 @@ public class UsuarioService {
                 .id(usuarioSalvo.getId())
                 .nome(usuarioSalvo.getNome())
                 .email(usuarioSalvo.getEmail())
-                .senha(usuarioSalvo.getSenha())
                 .build();
         } catch (Exception e) {
             log.error("Erro ao cadastrar usuario: {}", e.getMessage());

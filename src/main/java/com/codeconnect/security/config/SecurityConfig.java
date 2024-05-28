@@ -33,7 +33,7 @@ public class SecurityConfig {
             SecurityFilterChain filtroDeSeguranca = httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(autorizacaoRequisicoes -> {
-                    autorizacaoRequisicoes.requestMatchers("/login").permitAll();
+                    autorizacaoRequisicoes.requestMatchers("/login", "/usuarios").permitAll();
                     autorizacaoRequisicoes.anyRequest().authenticated();
                 })
                 .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
