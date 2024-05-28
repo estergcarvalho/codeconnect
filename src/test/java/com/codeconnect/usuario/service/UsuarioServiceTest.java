@@ -2,6 +2,7 @@ package com.codeconnect.usuario.service;
 
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
+import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import org.junit.Test;
@@ -13,10 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -53,6 +57,7 @@ public class UsuarioServiceTest {
             .senha(SENHA_USUARIO)
             .build();
 
+        when(usuarioRepository.findByEmail(EMAIL_USUARIO)).thenReturn(Optional.empty());
         when(passwordEncoder.encode(usuarioRequest.getSenha())).thenReturn(SENHA_USUARIO);
         when(usuarioRepository.save(any())).thenReturn(usuario);
 
@@ -61,6 +66,20 @@ public class UsuarioServiceTest {
         assertEquals(ID_USUARIO, usuarioResponse.getId());
         assertEquals(NOME_USUARIO, usuarioResponse.getNome());
         assertEquals(EMAIL_USUARIO, usuarioResponse.getEmail());
+    }
+
+    @Test
+    @DisplayName("Deve lançar Exception Conflit ao cadastrar usuário existente")
+    public void deveLancarExceptionAoCadastrarUsuarioSeEmailJaExiste() {
+        UsuarioResquest usuarioRequest = UsuarioResquest.builder()
+            .nome(NOME_USUARIO)
+            .email(EMAIL_USUARIO)
+            .senha(SENHA_USUARIO)
+            .build();
+
+        when(usuarioRepository.findByEmail(EMAIL_USUARIO)).thenReturn(Optional.of(new Usuario()));
+
+        assertThrows(UsuarioJaExistenteException.class, () -> usuarioService.cadastrar(usuarioRequest));
     }
 
 }
