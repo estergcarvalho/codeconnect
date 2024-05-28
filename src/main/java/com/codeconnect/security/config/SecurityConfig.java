@@ -42,7 +42,8 @@ public class SecurityConfig {
                 .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException)
-                    -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
+                    -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                )
                 .build();
 
             log.info("Cadeia de filtros de segurança configurada com sucesso");
