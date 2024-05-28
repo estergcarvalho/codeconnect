@@ -3,6 +3,7 @@ package com.codeconnect.usuario.service;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
+import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,12 @@ public class UsuarioService {
 
     public UsuarioResponse cadastrar(UsuarioResquest usuarioResquest) {
         log.info("Inicio cadastro usuario");
+
+        if (usuarioRepository.findByEmail(usuarioResquest.getEmail()).isPresent()) {
+            log.error("Usuario com email {} já existe", usuarioResquest.getEmail());
+
+            throw new UsuarioJaExistenteException();
+        }
 
         try {
             String senha = passwordEncoder.encode(usuarioResquest.getSenha());

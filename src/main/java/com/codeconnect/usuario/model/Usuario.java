@@ -1,5 +1,6 @@
 package com.codeconnect.usuario.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +27,7 @@ public class Usuario {
     private String nome;
 
     @Email
+    @Column(name="email", unique = true)
     private String email;
 
     private String senha;
