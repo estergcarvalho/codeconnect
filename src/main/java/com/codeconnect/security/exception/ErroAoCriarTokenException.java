@@ -1,9 +1,18 @@
 package com.codeconnect.security.exception;
 
-public class ErroAoCriarTokenException extends RuntimeException {
+import com.codeconnect.exceptionhandler.CodeConnectException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 
-    public ErroAoCriarTokenException() {
-        super("Erro ao criar token");
+public class ErroAoCriarTokenException extends CodeConnectException {
+
+    @Override
+    public ProblemDetail handleProblemDetail() {
+        ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+
+        detalheProblema.setTitle("Erro ao criar token");
+
+        return detalheProblema;
     }
 
 }

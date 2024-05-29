@@ -1,13 +1,18 @@
 package com.codeconnect.usuario.exception;
 
+import com.codeconnect.exceptionhandler.CodeConnectException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.ProblemDetail;
 
-@ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class UsuarioNaoEncontradoException extends RuntimeException {
+public class UsuarioNaoEncontradoException extends CodeConnectException {
 
-    public UsuarioNaoEncontradoException() {
-        super("Usuário não encontrado");
+    @Override
+    public ProblemDetail handleProblemDetail() {
+        ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+
+        detalheProblema.setTitle("Usuário não encontrado");
+
+        return detalheProblema;
     }
 
 }

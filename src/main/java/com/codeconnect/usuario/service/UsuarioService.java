@@ -48,8 +48,8 @@ public class UsuarioService {
                 .nome(usuarioSalvo.getNome())
                 .email(usuarioSalvo.getEmail())
                 .build();
-        } catch (Exception e) {
-            log.error("Erro ao cadastrar usuario: {}", e.getMessage());
+        } catch (Exception exception) {
+            log.error("Erro ao cadastrar usuario: {}", exception.getMessage());
 
             throw new ErroAoCadastrarUsuarioException();
         }

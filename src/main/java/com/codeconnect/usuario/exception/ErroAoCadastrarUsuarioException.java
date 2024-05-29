@@ -1,13 +1,18 @@
 package com.codeconnect.usuario.exception;
 
+import com.codeconnect.exceptionhandler.CodeConnectException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.ProblemDetail;
 
-@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-public class ErroAoCadastrarUsuarioException extends RuntimeException {
+public class ErroAoCadastrarUsuarioException extends CodeConnectException {
 
-    public ErroAoCadastrarUsuarioException() {
-        super("Erro ao cadastrar usuario");
+    @Override
+    public ProblemDetail handleProblemDetail() {
+        ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        detalheProblema.setTitle("Erro ao cadastrar usuário");
+
+        return detalheProblema;
     }
 
 }
