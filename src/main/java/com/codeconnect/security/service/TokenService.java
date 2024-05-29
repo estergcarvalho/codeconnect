@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 @Service
 @Slf4j
 public class TokenService {
@@ -27,6 +31,7 @@ public class TokenService {
             var token = JWT.create()
                 .withIssuer(EMISSOR)
                 .withSubject(usuario.getUsername())
+                .withExpiresAt(expiracaoToken().minusSeconds(3600L))
                 .sign(assinatura);
 
             log.info("Token gerado com sucesso");
@@ -37,6 +42,10 @@ public class TokenService {
 
             throw new ErroAoCriarTokenException();
         }
+    }
+
+    public Instant expiracaoToken() {
+        return LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String validarToken(String token) {
