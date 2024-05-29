@@ -1,17 +1,16 @@
-package com.codeconnect.security.exception;
+package com.codeconnect.exceptionhandler;
 
-import com.codeconnect.exceptionhandler.CodeConnectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 
-public class ErroTokenInvalidoException extends CodeConnectException {
+public class CodeConnectException extends RuntimeException {
 
-    @Override
     public ProblemDetail handleProblemDetail() {
         ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 
-        detalheProblema.setTitle("Token invalido");
+        detalheProblema.setTitle("CodeConnect Erro Interno");
 
         return detalheProblema;
     }
+
 }

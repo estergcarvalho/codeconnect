@@ -1,13 +1,18 @@
 package com.codeconnect.usuario.exception;
 
+import com.codeconnect.exceptionhandler.CodeConnectException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.ProblemDetail;
 
-@ResponseStatus(code = HttpStatus.CONFLICT)
-public class UsuarioJaExistenteException extends RuntimeException {
+public class UsuarioJaExistenteException extends CodeConnectException {
 
-    public UsuarioJaExistenteException() {
-        super("Usuario já existente");
+    @Override
+    public ProblemDetail handleProblemDetail() {
+        ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+
+        detalheProblema.setTitle("Usuário já existente");
+
+        return detalheProblema;
     }
 
 }
