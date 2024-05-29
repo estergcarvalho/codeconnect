@@ -1,5 +1,6 @@
 package com.codeconnect.login.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginRequest {
 
+    @Schema(description = "Email do usuario", example = "joao@teste.com")
     @NotBlank(message = "E-mail do usuario não deve ser nulo ou vazio")
     private String email;
 
+    @Schema(description = "Senha do usuario", example = "Abc123")
     @NotBlank(message = "Senha do usuario não deve ser nula ou vazia")
     private String senha;
 
