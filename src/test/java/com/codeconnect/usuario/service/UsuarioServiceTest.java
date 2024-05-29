@@ -69,15 +69,20 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar Exception Conflit ao cadastrar usuário existente")
-    public void deveLancarExceptionAoCadastrarUsuarioSeEmailJaExiste() {
+    @DisplayName("Deve lançar UsuarioJaExistenteException ao cadastrar usuário existente")
+    public void deveLancarUsuarioJaExistenteException () {
+        Usuario usuario = Usuario.builder()
+            .nome(NOME_USUARIO)
+            .email(EMAIL_USUARIO)
+            .build();
+
         UsuarioResquest usuarioRequest = UsuarioResquest.builder()
             .nome(NOME_USUARIO)
             .email(EMAIL_USUARIO)
             .senha(SENHA_USUARIO)
             .build();
 
-        when(usuarioRepository.findByEmail(EMAIL_USUARIO)).thenReturn(Optional.of(new Usuario()));
+        when(usuarioRepository.findByEmail(EMAIL_USUARIO)).thenReturn(Optional.of(usuario));
 
         assertThrows(UsuarioJaExistenteException.class, () -> usuarioService.cadastrar(usuarioRequest));
     }
