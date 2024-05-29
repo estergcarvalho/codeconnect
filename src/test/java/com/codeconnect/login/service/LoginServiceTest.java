@@ -2,7 +2,7 @@ package com.codeconnect.login.service;
 
 import com.codeconnect.login.dto.LoginRequest;
 import com.codeconnect.login.dto.LoginResponse;
-import com.codeconnect.security.exception.ErroAoRecuperarTokenExpection;
+import com.codeconnect.security.exception.ErroAoCriarTokenException;
 import com.codeconnect.security.model.UserDetailsImpl;
 import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.model.Usuario;
@@ -62,7 +62,7 @@ public class LoginServiceTest {
     public void deveLancarExcecaoAoFalharAutenticacao() {
         LoginRequest loginRequest = new LoginRequest(EMAIL_VALIDO, SENHA_VALIDA);
 
-        when(authenticationManager.authenticate(any())).thenThrow(new ErroAoRecuperarTokenExpection());
+        when(authenticationManager.authenticate(any())).thenThrow(new ErroAoCriarTokenException());
 
         assertThrows(RuntimeException.class, () -> loginService.autenticarUsuario(loginRequest));
     }

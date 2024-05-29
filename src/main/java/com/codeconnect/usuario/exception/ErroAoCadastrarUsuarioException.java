@@ -9,4 +9,5 @@ public class ErroAoCadastrarUsuarioException extends RuntimeException {
     public ErroAoCadastrarUsuarioException() {
         super("Erro ao cadastrar usuario");
     }
+
 }
