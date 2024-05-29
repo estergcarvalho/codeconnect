@@ -1,5 +1,6 @@
 package com.codeconnect.usuario.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +13,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UsuarioResquest {
 
-    @NotBlank(message = "Nome do usuario não deve ser nulo ou vazio")
+    @Schema(description = "Nome usuário", example = "Joao")
+    @NotBlank(message = "Nome do usuário não deve ser nulo ou vazio")
     private String nome;
 
-    @NotBlank(message = "E-mail do usuario não deve ser nulo ou vazio")
+    @Schema(description = "Email usuário", example = "joao@teste.com")
+    @NotBlank(message = "E-mail do usuário não deve ser nulo ou vazio")
     private String email;
 
-    @NotBlank(message = "Senha do usuario não deve ser nula ou vazia")
+    @Schema(description = "Senha usuário", example = "Abc123")
+    @NotBlank(message = "Senha do usuário não deve ser nula ou vazia")
     private String senha;
 
 }
