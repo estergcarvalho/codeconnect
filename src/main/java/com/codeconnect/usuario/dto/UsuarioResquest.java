@@ -13,16 +13,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UsuarioResquest {
 
-    @Schema(description = "Nome usuario", example = "Joao")
-    @NotBlank(message = "Nome do usuario não deve ser nulo ou vazio")
+    @Schema(description = "Nome usuário", example = "Joao")
+    @NotBlank(message = "Nome do usuário não deve ser nulo ou vazio")
     private String nome;
 
-    @Schema(description = "Email usuario", example = "joao@teste.com")
-    @NotBlank(message = "E-mail do usuario não deve ser nulo ou vazio")
+    @Schema(description = "Email usuário", example = "joao@teste.com")
+    @NotBlank(message = "E-mail do usuário não deve ser nulo ou vazio")
     private String email;
 
-    @Schema(description = "Senha usuario", example = "Abc123")
-    @NotBlank(message = "Senha do usuario não deve ser nula ou vazia")
+    @Schema(description = "Senha usuário", example = "Abc123")
+    @NotBlank(message = "Senha do usuário não deve ser nula ou vazia")
     private String senha;
 
 }
