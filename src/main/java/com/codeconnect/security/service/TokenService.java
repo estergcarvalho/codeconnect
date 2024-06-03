@@ -2,6 +2,7 @@ package com.codeconnect.security.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.codeconnect.login.dto.LoginResponse;
 import com.codeconnect.security.exception.ErroAoCriarTokenException;
 import com.codeconnect.security.exception.ErroTokenInvalidoException;
 import com.codeconnect.security.model.UserDetailsImpl;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service
 @Slf4j
@@ -22,30 +21,32 @@ public class TokenService {
 
     private static final String EMISSOR = "codeconnect-api";
 
-    public String gerarToken(UserDetailsImpl usuario) {
+    public LoginResponse gerarToken(UserDetailsImpl usuario) {
         log.info("Iniciando geração do token");
 
         try {
             var assinatura = Algorithm.HMAC256(tokenSenha);
+            var tempoExpiracaoToken = 3600L;
+            var expiracaoToken = Instant.now().plusSeconds(tempoExpiracaoToken);
 
             var token = JWT.create()
                 .withIssuer(EMISSOR)
                 .withSubject(usuario.getUsername())
-                .withExpiresAt(expiracaoToken().minusSeconds(3600L))
+                .withExpiresAt(expiracaoToken)
                 .sign(assinatura);
 
             log.info("Token gerado com sucesso");
 
-            return token;
+            return LoginResponse.builder()
+                .access_token(token)
+                .token_type("Bearer")
+                .expires_in(tempoExpiracaoToken)
+                .build();
         } catch (Exception exception) {
             log.error("Erro ao gerar token", exception);
 
             throw new ErroAoCriarTokenException();
         }
-    }
-
-    public Instant expiracaoToken() {
-        return LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public String validarToken(String token) {

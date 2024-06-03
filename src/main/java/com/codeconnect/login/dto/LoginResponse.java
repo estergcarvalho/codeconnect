@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
 
     @Schema(description = "Token gerado")
-    private String acesso_token;
+    private String access_token;
 
     @Schema(description = "Tipo de token")
-    private String tipo_token;
+    private String token_type;
 
     @Schema(description = "Tempo de expiração em segundos")
-    private Long expira_em;
+    private Long expires_in;
 }
