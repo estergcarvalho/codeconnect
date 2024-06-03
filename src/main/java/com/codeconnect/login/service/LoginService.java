@@ -3,8 +3,8 @@ package com.codeconnect.login.service;
 import com.codeconnect.login.dto.LoginRequest;
 import com.codeconnect.login.dto.LoginResponse;
 import com.codeconnect.security.exception.ErroAoCriarTokenException;
-import com.codeconnect.security.service.TokenService;
 import com.codeconnect.security.model.UserDetailsImpl;
+import com.codeconnect.security.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +31,8 @@ public class LoginService {
 
             UserDetailsImpl detalhesDoUsuario = (UserDetailsImpl) autenticacao.getPrincipal();
 
-            return new LoginResponse(tokenService.gerarToken(detalhesDoUsuario));
+            return tokenService.gerarToken(detalhesDoUsuario);
+
         } catch (Exception exception) {
             log.error("Erro ao gerar token do usuario: {}", exception.getMessage());
 
