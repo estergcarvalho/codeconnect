@@ -32,6 +32,7 @@ public class LoginService {
             UserDetailsImpl detalhesDoUsuario = (UserDetailsImpl) autenticacao.getPrincipal();
 
             return tokenService.gerarToken(detalhesDoUsuario);
+
         } catch (Exception exception) {
             log.error("Erro ao gerar token do usuario: {}", exception.getMessage());
 
