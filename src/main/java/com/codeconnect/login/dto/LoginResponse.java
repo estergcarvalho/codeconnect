@@ -1,5 +1,6 @@
 package com.codeconnect.login.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,12 +14,15 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
 
     @Schema(description = "Token gerado")
-    private String access_token;
+    @JsonProperty("access_token")
+    private String accessToken;
 
     @Schema(description = "Tipo de token")
-    private String token_type;
+    @JsonProperty("token_type")
+    private String tokenType;
 
     @Schema(description = "Tempo de expiração em segundos")
-    private Long expires_in;
+    @JsonProperty("expires_in")
+    private Long expiresIn;
 
 }

@@ -16,6 +16,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +36,7 @@ public class SecurityConfig {
         log.info("Iniciando configuracao da cadeia de filtros de segurança");
 
         SecurityFilterChain filtroDeSeguranca = httpSecurity
+            .cors(cors -> cors.configurationSource(configuracaoCors()))
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(autorizacaoRequisicoes -> {
                 autorizacaoRequisicoes.requestMatchers(HttpMethod.POST, "/login").permitAll();
@@ -62,4 +69,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    public CorsConfigurationSource configuracaoCors() {
+        CorsConfiguration  configuracao = new CorsConfiguration();
+        configuracao.setAllowCredentials(true);
+        configuracao.setAllowedOrigins(List.of("http://localhost:5500"));
+        configuracao.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuracao.setAllowedHeaders(List.of("*"));
+
+        UrlBasedCorsConfigurationSource urlBaseFonteConfiguracao = new UrlBasedCorsConfigurationSource();
+        urlBaseFonteConfiguracao.registerCorsConfiguration("/**", configuracao);
+
+        return urlBaseFonteConfiguracao;
+    }
 }
