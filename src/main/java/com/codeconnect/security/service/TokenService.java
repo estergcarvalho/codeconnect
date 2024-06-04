@@ -38,9 +38,9 @@ public class TokenService {
             log.info("Token gerado com sucesso");
 
             return LoginResponse.builder()
-                .access_token(token)
-                .token_type("Bearer")
-                .expires_in(tempoExpiracaoToken)
+                .accessToken(token)
+                .tokenType("Bearer")
+                .expiresIn(tempoExpiracaoToken)
                 .build();
         } catch (Exception exception) {
             log.error("Erro ao gerar token", exception);
