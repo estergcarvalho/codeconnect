@@ -54,7 +54,7 @@ public class LoginServiceTest {
         LoginResponse response = loginService.autenticarUsuario(loginRequest);
 
         assertNotNull(response);
-        assertFalse(response.getAccess_token().isEmpty());
+        assertFalse(response.getAccessToken().isEmpty());
     }
 
     @Test
