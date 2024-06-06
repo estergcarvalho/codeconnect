@@ -71,7 +71,7 @@ public class UsuarioService {
     public AmigoResponse listarAmigos() {
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        List<AmigoDetalheResponse> amigoDetalheResponse = usuario.getUsuarioAmigos().stream()
+        List<AmigoDetalheResponse> amigoDetalheResponse = usuario.getAmigos().stream()
             .map(amigo -> AmigoDetalheResponse.builder()
                 .nome(amigo.getAmigo().getNome())
                 .build())
