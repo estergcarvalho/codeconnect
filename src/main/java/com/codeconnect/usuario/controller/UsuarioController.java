@@ -42,11 +42,10 @@ public class UsuarioController {
     }
 
     @Operation(
-        summary = "Lista de amigos do usuário",
-        description = "Listagem de amigos",
+        summary = "Amigos do usuário",
+        description = "Lista com os amigos do usuário",
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de amigos encontrada"),
-            @ApiResponse(responseCode = "404", description = "Lista de amigos nao encontrada"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
         }
     )
