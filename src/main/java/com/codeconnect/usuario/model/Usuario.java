@@ -36,6 +36,6 @@ public class Usuario {
     private String senha;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Amigo> amigos;
+    private List<UsuarioAmigo> usuarioAmigos;
 
 }
