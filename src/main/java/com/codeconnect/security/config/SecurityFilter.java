@@ -35,9 +35,9 @@ public class SecurityFilter extends OncePerRequestFilter {
         var tokenJwt = recuperarToken(request);
 
         if (tokenJwt != null) {
-            String assunto = tokenService.validarToken(tokenJwt);
+            String tokenUsuario = tokenService.validarToken(tokenJwt);
 
-            Usuario usuario = usuarioRepository.findByEmail(assunto)
+            Usuario usuario = usuarioRepository.findByEmail(tokenUsuario)
                 .orElseThrow(UsuarioNaoEncontradoException::new);
 
             UserDetailsImpl usuarioDetalhe = new UserDetailsImpl(usuario);

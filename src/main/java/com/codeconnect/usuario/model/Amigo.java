@@ -9,19 +9,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Amigo {
 
     @Id
@@ -33,7 +32,7 @@ public class Amigo {
     private Usuario usuario;
 
     @ManyToOne
-    @JoinColumn(name = "id_amigo")
+    @JoinColumn(name = "id_amigo", referencedColumnName = "id")
     private Usuario amigo;
 
     @Enumerated(EnumType.ORDINAL)

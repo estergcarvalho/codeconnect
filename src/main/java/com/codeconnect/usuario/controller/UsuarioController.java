@@ -1,5 +1,6 @@
 package com.codeconnect.usuario.controller;
 
+import com.codeconnect.usuario.dto.AmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.service.UsuarioService;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,22 @@ public class UsuarioController {
         UsuarioResponse usuarioResponse = usuarioService.cadastrar(usuarioResquest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponse);
+    }
+
+    @Operation(
+        summary = "Lista de amigos do usuário",
+        description = "Listagem de amigos",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de amigos encontrada"),
+            @ApiResponse(responseCode = "404", description = "Lista de amigos nao encontrada"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+        }
+    )
+    @GetMapping("/amigos")
+    public ResponseEntity<AmigoResponse> listarAmigos() {
+        AmigoResponse amigo = usuarioService.listarAmigos();
+
+        return ResponseEntity.ok(amigo);
     }
 
 }
