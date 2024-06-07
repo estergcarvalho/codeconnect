@@ -5,6 +5,7 @@ import com.codeconnect.usuario.dto.AmigoDetalheResponse;
 import com.codeconnect.usuario.dto.AmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
+import com.codeconnect.usuario.enums.AmigoStatusEnum;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.model.Usuario;
@@ -72,6 +73,7 @@ public class UsuarioService {
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<AmigoDetalheResponse> amigoDetalheResponse = usuario.getAmigos().stream()
+            .filter(status -> status.getStatus() == AmigoStatusEnum.AMIGO)
             .map(amigo -> AmigoDetalheResponse.builder()
                 .nome(amigo.getAmigo().getNome())
                 .build())

@@ -1,9 +1,12 @@
 package com.codeconnect.usuario.service;
 
+import com.codeconnect.security.service.TokenService;
+import com.codeconnect.usuario.dto.AmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.model.UsuarioAmigo;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +17,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.codeconnect.usuario.enums.AmigoStatusEnum.AMIGO;
+import static com.codeconnect.usuario.enums.AmigoStatusEnum.PENDENTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +41,9 @@ public class UsuarioServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private TokenService tokenService;
 
     private static final UUID ID_USUARIO = UUID.randomUUID();
     private static final String NOME_USUARIO = "Teste";
@@ -69,7 +79,7 @@ public class UsuarioServiceTest {
 
     @Test
     @DisplayName("Deve lançar UsuarioJaExistenteException ao cadastrar usuário existente")
-    public void deveLancarUsuarioJaExistenteException () {
+    public void deveLancarUsuarioJaExistenteException() {
         Usuario usuario = Usuario.builder()
             .nome(NOME_USUARIO)
             .email(EMAIL_USUARIO)
@@ -84,6 +94,43 @@ public class UsuarioServiceTest {
         when(usuarioRepository.findByEmail(EMAIL_USUARIO)).thenReturn(Optional.of(usuario));
 
         assertThrows(UsuarioJaExistenteException.class, () -> usuarioService.cadastrar(usuarioRequest));
+    }
+
+    @Test
+    @DisplayName("Deve listar amigos adicionados")
+    public void deveListarAmigos() {
+        //Arrange
+        UsuarioAmigo amigo = UsuarioAmigo.builder()
+            .amigo(Usuario.builder()
+                .nome("Ester").build()
+            )
+            .status(AMIGO)
+            .build();
+
+        UsuarioAmigo amizadePendente = UsuarioAmigo.builder()
+            .amigo(Usuario.builder()
+                .nome("Maria").build()
+            )
+            .status(PENDENTE)
+            .build();
+
+        List<UsuarioAmigo> usuarioAmigos = Arrays.asList(amigo, amizadePendente);
+
+        Usuario usuario = Usuario.builder()
+            .nome(NOME_USUARIO)
+            .email(EMAIL_USUARIO)
+            .senha(SENHA_USUARIO)
+            .amigos(usuarioAmigos)
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+
+        // Act
+        AmigoResponse amigoResponse = usuarioService.listarAmigos();
+
+        // Assert
+        assertEquals(1, amigoResponse.getAmigos().size());
+        assertEquals("Ester", amigoResponse.getAmigos().getFirst().getNome());
     }
 
 }
