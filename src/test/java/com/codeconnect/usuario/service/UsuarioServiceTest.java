@@ -99,7 +99,6 @@ public class UsuarioServiceTest {
     @Test
     @DisplayName("Deve listar amigos adicionados")
     public void deveListarAmigos() {
-        //Arrange
         UsuarioAmigo amigo = UsuarioAmigo.builder()
             .amigo(Usuario.builder()
                 .nome("Ester").build()
@@ -125,10 +124,8 @@ public class UsuarioServiceTest {
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
 
-        // Act
         AmigoResponse amigoResponse = usuarioService.listarAmigos();
 
-        // Assert
         assertEquals(1, amigoResponse.getAmigos().size());
         assertEquals("Ester", amigoResponse.getAmigos().getFirst().getNome());
     }
