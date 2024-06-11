@@ -6,8 +6,14 @@ import com.codeconnect.login.dto.LoginResponse;
 import com.codeconnect.security.exception.ErroAoCriarTokenException;
 import com.codeconnect.security.exception.ErroTokenInvalidoException;
 import com.codeconnect.security.model.UserDetailsImpl;
+import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
+import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -15,6 +21,9 @@ import java.time.Instant;
 @Service
 @Slf4j
 public class TokenService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Value("${api.security.token.secret}")
     private String tokenSenha;
@@ -55,7 +64,7 @@ public class TokenService {
         try {
             var assinatura = Algorithm.HMAC256(tokenSenha);
 
-            var assunto = JWT.require(assinatura)
+            var tokenUsuario = JWT.require(assinatura)
                 .withIssuer(EMISSOR)
                 .build()
                 .verify(token)
@@ -63,12 +72,20 @@ public class TokenService {
 
             log.info("Assunto do token obtido com sucesso");
 
-            return assunto;
+            return tokenUsuario;
         } catch (Exception exception) {
             log.error("Erro ao obter o assunto do token");
 
             throw new ErroTokenInvalidoException();
         }
+    }
+
+    public Usuario obterUsuarioToken() {
+        Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
+        String usuario = autenticacao.getName();
+
+        return usuarioRepository.findByEmail(usuario)
+            .orElseThrow(UsuarioNaoEncontradoException::new);
     }
 
 }

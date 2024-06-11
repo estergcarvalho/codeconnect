@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS amigo (
+CREATE TABLE IF NOT EXISTS usuario_amigo (
     id              UUID        PRIMARY KEY NOT NULL,
     id_usuario      UUID        NOT NULL,
     id_amigo        UUID        NOT NULL,
