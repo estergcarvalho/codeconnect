@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @PostMapping
     public ResponseEntity<PostResponse> salvar(@RequestBody PostRequest postRequest) {
