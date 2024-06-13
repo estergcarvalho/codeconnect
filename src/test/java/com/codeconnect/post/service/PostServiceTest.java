@@ -16,9 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -83,6 +86,57 @@ public class PostServiceTest {
         when(postRepository.save(any(Post.class))).thenThrow(new ErroAoSalvarPostException());
 
         assertThrows(ErroAoSalvarPostException.class, () -> postService.salvar(postagemRequest));
+    }
+
+    @Test
+    @DisplayName("Deve retornar lista de postagens quando usuário possuir postagens")
+    public void deveRetornarListaDePostagensQuandoUsuarioPossuirPostagens() {
+        Timestamp dataCriacao = new Timestamp(System.currentTimeMillis());
+
+        UUID usuarioId = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .email("teste@teste.com")
+            .posts(new ArrayList<>())
+            .build();
+
+        Post postagemUm = Post.builder()
+            .id(usuarioId)
+            .usuario(Usuario.builder().id(usuarioId).build())
+            .dataCriacao(dataCriacao)
+            .descricao("Boa tarde, lendo um livro super legal 'Por trás de uma lógica', super indico")
+            .build();
+
+        Post postagemDois = Post.builder()
+            .id(UUID.randomUUID())
+            .usuario(Usuario.builder().id(usuarioId).build())
+            .dataCriacao(dataCriacao)
+            .descricao("Bom dia rede, hoje quero compartilhar meu novo projeto Java, está bem legal")
+            .build();
+
+        List<Post> postagens = List.of(postagemUm, postagemDois);
+
+        usuario.getPosts().addAll(postagens);
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+
+        List<PostResponse> listaPostagens = postService.listar();
+
+        assertFalse(listaPostagens.isEmpty());
+        assertEquals(2, listaPostagens.size());
+
+        PostResponse postResponseUm = listaPostagens.getFirst();
+        assertEquals(postagemUm.getId(), postResponseUm.getId());
+        assertEquals(postagemUm.getDataCriacao(), postResponseUm.getDataCriacao());
+        assertEquals(postagemUm.getDescricao(), postResponseUm.getDescricao());
+        assertEquals(postagemUm.getUsuario().getId(), usuario.getId());
+
+        PostResponse postResponseDois = listaPostagens.get(1);
+        assertEquals(postagemDois.getId(), postResponseDois.getId());
+        assertEquals(postagemDois.getDataCriacao(), postResponseDois.getDataCriacao());
+        assertEquals(postagemDois.getDescricao(), postResponseDois.getDescricao());
+        assertEquals(postagemDois.getUsuario().getId(), usuario.getId());
     }
 
 }

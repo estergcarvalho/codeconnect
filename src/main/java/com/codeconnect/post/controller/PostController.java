@@ -10,10 +10,13 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -21,11 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     @Autowired
-    private PostService postService;
+    private PostService service;
 
     @Operation(
-        summary = "Cria um nova postagem",
-        description = "Cria um nova postagem para o usuário atualmente logado com base nos dados fornecidos",
+        summary = "Cria uma nova postagem",
+        description = "Cria uma nova postagem para o usuário atualmente logado com base nos dados fornecidos",
         responses = {
             @ApiResponse(responseCode = "201", description = "Postagema criada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
@@ -33,9 +36,24 @@ public class PostController {
     )
     @PostMapping
     public ResponseEntity<PostResponse> salvar(@RequestBody @Valid PostRequest postRequest) {
-        PostResponse postResponse = postService.salvar(postRequest);
+        PostResponse postResponse = service.salvar(postRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(postResponse);
+    }
+
+    @Operation(
+        summary = "Recupera os posts do usuário",
+        description = "Recupera a lista de posts do usuário atualmente logado",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de posts recuperada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+        }
+    )
+    @GetMapping
+    public ResponseEntity<List<PostResponse>> listar() {
+        List<PostResponse> postagens = service.listar();
+
+        return ResponseEntity.ok(postagens);
     }
 
 }

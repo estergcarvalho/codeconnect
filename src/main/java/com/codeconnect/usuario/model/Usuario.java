@@ -1,5 +1,6 @@
 package com.codeconnect.usuario.model;
 
+import com.codeconnect.post.model.Post;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,5 +38,8 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<UsuarioAmigo> amigos;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Post> posts;
 
 }
