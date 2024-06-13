@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,8 +95,14 @@ public class PostServiceTest {
 
         UUID usuarioId = UUID.randomUUID();
 
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .email("teste@teste.com")
+            .posts(new ArrayList<>())
+            .build();
+
         Post postagemUm = Post.builder()
-            .id(UUID.randomUUID())
+            .id(usuarioId)
             .usuario(Usuario.builder().id(usuarioId).build())
             .dataCriacao(dataCriacao)
             .descricao("Boa tarde, lendo um livro super legal 'Por trás de uma lógica', super indico")
@@ -110,11 +117,7 @@ public class PostServiceTest {
 
         List<Post> postagens = List.of(postagemUm, postagemDois);
 
-        Usuario usuario = Usuario.builder()
-            .id(UUID.randomUUID())
-            .email("teste@teste.com")
-            .posts(postagens)
-            .build();
+        usuario.getPosts().addAll(postagens);
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
 
@@ -127,11 +130,13 @@ public class PostServiceTest {
         assertEquals(postagemUm.getId(), postResponseUm.getId());
         assertEquals(postagemUm.getDataCriacao(), postResponseUm.getDataCriacao());
         assertEquals(postagemUm.getDescricao(), postResponseUm.getDescricao());
+        assertEquals(postagemUm.getUsuario().getId(), usuario.getId());
 
         PostResponse postResponseDois = listaPostagens.get(1);
         assertEquals(postagemDois.getId(), postResponseDois.getId());
         assertEquals(postagemDois.getDataCriacao(), postResponseDois.getDataCriacao());
         assertEquals(postagemDois.getDescricao(), postResponseDois.getDescricao());
+        assertEquals(postagemDois.getUsuario().getId(), usuario.getId());
     }
 
 }
