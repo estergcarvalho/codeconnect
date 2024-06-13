@@ -29,13 +29,13 @@ import static org.mockito.Mockito.when;
 public class PostServiceTest {
 
     @InjectMocks
-    PostService postService;
+    private PostService postService;
 
     @Mock
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
     @Mock
-    TokenService tokenService;
+    private TokenService tokenService;
 
     @Test
     @DisplayName("Deve cadastrar post do usuario")
