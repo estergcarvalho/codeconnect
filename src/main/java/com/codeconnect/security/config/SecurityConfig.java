@@ -45,6 +45,7 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/swagger-ui/**",
                     "/v3/api-docs/**").permitAll();
+
                 autorizacaoRequisicoes.anyRequest().authenticated();
             })
             .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
