@@ -1,6 +1,6 @@
 package com.codeconnect.usuario.model;
 
-import com.codeconnect.usuario.enums.AmigoStatusEnum;
+import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,6 +36,6 @@ public class UsuarioAmigo {
     private Usuario amigo;
 
     @Enumerated(EnumType.ORDINAL)
-    private AmigoStatusEnum status;
+    private UsuarioAmigoStatusEnum status;
 
 }

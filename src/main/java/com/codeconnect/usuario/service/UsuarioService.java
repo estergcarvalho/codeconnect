@@ -1,15 +1,15 @@
 package com.codeconnect.usuario.service;
 
 import com.codeconnect.security.service.TokenService;
-import com.codeconnect.usuario.dto.AmigoDetalheResponse;
-import com.codeconnect.usuario.dto.AmigoResponse;
+import com.codeconnect.usuario.dto.UsuarioAmigoDetalheResponse;
+import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
-import com.codeconnect.usuario.enums.AmigoStatusEnum;
+import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.model.Usuario;
-import com.codeconnect.usuario.repository.AmigoRepository;
+import com.codeconnect.usuario.repository.UsuarioAmigoRepository;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private AmigoRepository amigoRepository;
+    private UsuarioAmigoRepository usuarioAmigoRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -69,20 +69,20 @@ public class UsuarioService {
         }
     }
 
-    public AmigoResponse listarAmigos() {
+    public UsuarioAmigoResponse listarAmigos() {
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        List<AmigoDetalheResponse> amigoDetalheResponse = usuario.getAmigos().stream()
-            .filter(status -> status.getStatus() == AmigoStatusEnum.AMIGO)
-            .map(amigo -> AmigoDetalheResponse.builder()
+        List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
+            .filter(status -> status.getStatus() == UsuarioAmigoStatusEnum.AMIGO)
+            .map(amigo -> UsuarioAmigoDetalheResponse.builder()
                 .nome(amigo.getAmigo().getNome())
                 .build())
             .collect(Collectors.toList());
 
-        int totalAmigos = amigoDetalheResponse.size();
+        int totalAmigos = usuarioAmigoDetalheResponse.size();
 
-        return AmigoResponse.builder()
-            .amigos(amigoDetalheResponse)
+        return UsuarioAmigoResponse.builder()
+            .amigos(usuarioAmigoDetalheResponse)
             .total(totalAmigos)
             .build();
     }
