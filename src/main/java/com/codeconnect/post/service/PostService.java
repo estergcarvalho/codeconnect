@@ -24,7 +24,7 @@ public class PostService {
     private PostRepository postRepository;
 
     public PostResponse salvar(PostRequest postRequest) {
-        log.info("Iniciando salvamento do post");
+        log.info("Iniciando salvamento da postagem");
 
         try {
             Usuario usuario = tokenService.obterUsuarioToken();
@@ -39,16 +39,15 @@ public class PostService {
 
             Post salvarPost = postRepository.save(post);
 
-            log.info("Post salvo com sucesso");
+            log.info("Postagem salva com sucesso");
 
             return PostResponse.builder()
                 .id(salvarPost.getId())
-                .idUsuario(salvarPost.getUsuario().getId())
                 .dataCriacao(salvarPost.getDataCriacao())
                 .descricao(salvarPost.getDescricao())
                 .build();
         } catch (Exception exception) {
-            log.error("Erro ao salvar post", exception);
+            log.error("Erro ao salvar postagem", exception);
             throw new ErroAoSalvarPostException();
         }
     }

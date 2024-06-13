@@ -41,11 +41,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(autorizacaoRequisicoes -> {
                 autorizacaoRequisicoes.requestMatchers(HttpMethod.POST, "/login").permitAll();
                 autorizacaoRequisicoes.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-                autorizacaoRequisicoes.requestMatchers(HttpMethod.POST, "/post").permitAll();
                 autorizacaoRequisicoes.requestMatchers(
                     "/swagger-ui.html",
                     "/swagger-ui/**",
                     "/v3/api-docs/**").permitAll();
+
                 autorizacaoRequisicoes.anyRequest().authenticated();
             })
             .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

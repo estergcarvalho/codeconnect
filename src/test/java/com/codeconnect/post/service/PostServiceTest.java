@@ -38,9 +38,9 @@ public class PostServiceTest {
     private TokenService tokenService;
 
     @Test
-    @DisplayName("Deve cadastrar post do usuario")
-    public void cadastrarPost() {
-        PostRequest postRequest = PostRequest.builder()
+    @DisplayName("Deve cadastrar postagem do usuario")
+    public void deveCadastrarPostagemUsuario() {
+        PostRequest postagemRequest = PostRequest.builder()
             .descricao("Programadar é muito bom")
             .build();
 
@@ -49,29 +49,28 @@ public class PostServiceTest {
             .email("teste@teste.com")
             .build();
 
-        Post postSalvo = Post.builder()
+        Post postagemSalva = Post.builder()
             .id(UUID.randomUUID())
             .usuario(usuario)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
-            .descricao(postRequest.getDescricao())
+            .descricao(postagemRequest.getDescricao())
             .build();
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
-        when(postRepository.save(any(Post.class))).thenReturn(postSalvo);
+        when(postRepository.save(any(Post.class))).thenReturn(postagemSalva);
 
-        PostResponse postResponse = postService.salvar(postRequest);
+        PostResponse postResponse = postService.salvar(postagemRequest);
 
         assertNotNull(postResponse);
-        assertEquals(postSalvo.getId(), postResponse.getId());
-        assertEquals(postSalvo.getUsuario().getId(), postResponse.getIdUsuario());
-        assertEquals(postSalvo.getDescricao(), postResponse.getDescricao());
+        assertEquals(postagemSalva.getId(), postResponse.getId());
+        assertEquals(postagemSalva.getDescricao(), postResponse.getDescricao());
         assertNotNull(postResponse.getDataCriacao());
     }
 
     @Test
     @DisplayName("Deve lançar ErroAoSalvarPostException ao cadastrar post")
     public void deveLancarErroAoSalvarPostException() {
-        PostRequest postRequest = PostRequest.builder()
+        PostRequest postagemRequest = PostRequest.builder()
             .descricao("Programadar é muito bom")
             .build();
 
@@ -83,7 +82,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(postRepository.save(any(Post.class))).thenThrow(new ErroAoSalvarPostException());
 
-        assertThrows(ErroAoSalvarPostException.class, () -> postService.salvar(postRequest));
+        assertThrows(ErroAoSalvarPostException.class, () -> postService.salvar(postagemRequest));
     }
 
 }
