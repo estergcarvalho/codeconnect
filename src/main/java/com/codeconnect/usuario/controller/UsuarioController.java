@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioService service;
 
     @Operation(
         summary = "Cadastra um usuário",
@@ -36,7 +36,7 @@ public class UsuarioController {
     )
     @PostMapping
     public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody @Valid UsuarioResquest usuarioResquest) {
-        UsuarioResponse usuarioResponse = usuarioService.cadastrar(usuarioResquest);
+        UsuarioResponse usuarioResponse = service.cadastrar(usuarioResquest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponse);
     }
@@ -51,7 +51,7 @@ public class UsuarioController {
     )
     @GetMapping("/amigos")
     public ResponseEntity<UsuarioAmigoResponse> listarAmigos() {
-        UsuarioAmigoResponse amigo = usuarioService.listarAmigos();
+        UsuarioAmigoResponse amigo = service.listarAmigos();
 
         return ResponseEntity.ok(amigo);
     }

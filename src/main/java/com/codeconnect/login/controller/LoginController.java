@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     @Autowired
-    private LoginService loginService;
+    private LoginService service;
 
     @Operation(
         summary = "Realiza o login de um usuário",
@@ -37,7 +37,7 @@ public class LoginController {
     )
     @PostMapping
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
-        LoginResponse token = loginService.autenticarUsuario(loginRequest);
+        LoginResponse token = service.autenticarUsuario(loginRequest);
 
         return ResponseEntity.ok(token);
     }

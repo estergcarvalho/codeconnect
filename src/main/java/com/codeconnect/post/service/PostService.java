@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,7 +23,7 @@ public class PostService {
     private TokenService tokenService;
 
     @Autowired
-    private PostRepository postRepository;
+    private PostRepository repository;
 
     public PostResponse salvar(PostRequest postRequest) {
         log.info("Iniciando salvamento da postagem");
@@ -37,7 +39,7 @@ public class PostService {
                 .descricao(postRequest.getDescricao())
                 .build();
 
-            Post salvarPost = postRepository.save(post);
+            Post salvarPost = repository.save(post);
 
             log.info("Postagem salva com sucesso");
 
@@ -51,6 +53,22 @@ public class PostService {
 
             throw new ErroAoSalvarPostException();
         }
+    }
+
+    public List<PostResponse> listar() {
+        log.info("Iniciando a lista de post do usuario");
+
+        Usuario usuario = tokenService.obterUsuarioToken();
+
+        List<Post> postagens = usuario.getPosts();
+
+        return postagens.stream()
+            .map(post -> PostResponse.builder()
+                .id(post.getId())
+                .dataCriacao(post.getDataCriacao())
+                .descricao(post.getDescricao())
+                .build())
+            .collect(Collectors.toList());
     }
 
 }

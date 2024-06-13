@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository repository;
 
     @Autowired
     private UsuarioAmigoRepository usuarioAmigoRepository;
@@ -38,7 +38,7 @@ public class UsuarioService {
     public UsuarioResponse cadastrar(UsuarioResquest usuarioResquest) {
         log.info("Inicio cadastro usuario");
 
-        if (usuarioRepository.findByEmail(usuarioResquest.getEmail()).isPresent()) {
+        if (repository.findByEmail(usuarioResquest.getEmail()).isPresent()) {
             log.error("Usuario com email {} já existe", usuarioResquest.getEmail());
 
             throw new UsuarioJaExistenteException();
@@ -53,7 +53,7 @@ public class UsuarioService {
                 .senha(senha)
                 .build();
 
-            Usuario usuarioSalvo = usuarioRepository.save(usuario);
+            Usuario usuarioSalvo = repository.save(usuario);
 
             log.info("Usuario {} cadastrado com sucesso", usuario.getNome());
 
