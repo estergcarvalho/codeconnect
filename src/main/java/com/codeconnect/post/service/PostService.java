@@ -48,6 +48,7 @@ public class PostService {
                 .build();
         } catch (Exception exception) {
             log.error("Erro ao salvar postagem", exception);
+
             throw new ErroAoSalvarPostException();
         }
     }
