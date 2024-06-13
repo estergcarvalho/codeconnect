@@ -1,6 +1,6 @@
 package com.codeconnect.usuario.controller;
 
-import com.codeconnect.usuario.dto.AmigoResponse;
+import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.service.UsuarioService;
@@ -50,8 +50,8 @@ public class UsuarioController {
         }
     )
     @GetMapping("/amigos")
-    public ResponseEntity<AmigoResponse> listarAmigos() {
-        AmigoResponse amigo = usuarioService.listarAmigos();
+    public ResponseEntity<UsuarioAmigoResponse> listarAmigos() {
+        UsuarioAmigoResponse amigo = usuarioService.listarAmigos();
 
         return ResponseEntity.ok(amigo);
     }

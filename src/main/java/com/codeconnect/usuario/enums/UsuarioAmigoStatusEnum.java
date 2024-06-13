@@ -1,6 +1,6 @@
 package com.codeconnect.usuario.enums;
 
-public enum AmigoStatusEnum {
+public enum UsuarioAmigoStatusEnum {
     AMIGO,
     PENDENTE;
 }

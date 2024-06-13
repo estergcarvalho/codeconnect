@@ -1,7 +1,7 @@
 package com.codeconnect.usuario.service;
 
 import com.codeconnect.security.service.TokenService;
-import com.codeconnect.usuario.dto.AmigoResponse;
+import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.codeconnect.usuario.enums.AmigoStatusEnum.AMIGO;
-import static com.codeconnect.usuario.enums.AmigoStatusEnum.PENDENTE;
+import static com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum.AMIGO;
+import static com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum.PENDENTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -124,10 +124,10 @@ public class UsuarioServiceTest {
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
 
-        AmigoResponse amigoResponse = usuarioService.listarAmigos();
+        UsuarioAmigoResponse usuarioAmigoResponse = usuarioService.listarAmigos();
 
-        assertEquals(1, amigoResponse.getAmigos().size());
-        assertEquals("Ester", amigoResponse.getAmigos().getFirst().getNome());
+        assertEquals(1, usuarioAmigoResponse.getAmigos().size());
+        assertEquals("Ester", usuarioAmigoResponse.getAmigos().getFirst().getNome());
     }
 
 }

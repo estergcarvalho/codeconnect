@@ -5,12 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AmigoDetalheResponse {
+public class UsuarioAmigoResponse {
 
-    private String nome;
+    private List<UsuarioAmigoDetalheResponse> amigos;
+    private int total;
 
 }
