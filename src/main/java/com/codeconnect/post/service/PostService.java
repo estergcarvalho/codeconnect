@@ -60,7 +60,7 @@ public class PostService {
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        List<Post> postagens = usuario.getPosts();
+        List<Post> postagens = repository.findAllByUsuarioId(usuario.getId());
 
         return postagens.stream()
             .map(post -> PostResponse.builder()

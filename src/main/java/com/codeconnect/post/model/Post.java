@@ -31,10 +31,6 @@ public class Post {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "id_amigo", referencedColumnName = "id", insertable = false, updatable = false)
-    private Usuario amigo;
-
     @Column(name = "data_criacao")
     private Timestamp dataCriacao;
 
