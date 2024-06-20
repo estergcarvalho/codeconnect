@@ -1,5 +1,6 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
 import com.codeconnect.post.exception.ErroAoSalvarPostException;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -60,7 +60,7 @@ public class PostService {
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        List<Post> postagens = usuario.getPosts();
+        List<Post> postagens = repository.findAllByUsuarioId(usuario.getId());
 
         return postagens.stream()
             .map(post -> PostResponse.builder()
@@ -68,7 +68,15 @@ public class PostService {
                 .dataCriacao(post.getDataCriacao())
                 .descricao(post.getDescricao())
                 .build())
-            .collect(Collectors.toList());
+            .toList();
+    }
+
+    public List<PostRecenteResponse> recentes() {
+        log.info("Iniciando a lista de post do usuário");
+
+        Usuario usuario = tokenService.obterUsuarioToken();
+
+        return repository.recentes(usuario.getId());
     }
 
 }

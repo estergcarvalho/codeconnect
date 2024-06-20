@@ -1,5 +1,6 @@
 package com.codeconnect.post.controller;
 
+import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
 import com.codeconnect.post.service.PostService;
@@ -54,6 +55,21 @@ public class PostController {
         List<PostResponse> postagens = service.listar();
 
         return ResponseEntity.ok(postagens);
+    }
+
+    @Operation(
+        summary = "Recupera os posts recentes do usuário logado",
+        description = "Recupera a lista de posts do usuário logado e de seus amigos",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de posts recentes recuperada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+        }
+    )
+    @GetMapping("/recentes")
+    public ResponseEntity<List<PostRecenteResponse>> recentes() {
+        List<PostRecenteResponse> postagensRecentes = service.recentes();
+
+        return ResponseEntity.ok(postagensRecentes);
     }
 
 }
