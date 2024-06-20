@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
 
-    @Query(value = "SELECT p.id, u.id AS idUsuario, u.nome usuarionome, p.descricao, p.data_criacao AS datacriacao " +
+    @Query(value = "SELECT p.id, u.id AS idUsuario, u.nome usuarioNome, p.descricao, p.data_criacao AS dataCriacao " +
         "FROM post p " +
         "INNER JOIN usuario_amigo ua ON p.id_usuario = ua.id_amigo " +
         "INNER JOIN usuario u ON p.id_usuario = u.id " +
