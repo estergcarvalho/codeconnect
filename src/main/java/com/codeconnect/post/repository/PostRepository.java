@@ -1,7 +1,6 @@
 package com.codeconnect.post.repository;
 
 import com.codeconnect.post.dto.PostRecenteResponse;
-import com.codeconnect.post.dto.PostResponse;
 import com.codeconnect.post.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
