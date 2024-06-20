@@ -32,7 +32,7 @@ public class Post {
     private Usuario usuario;
 
     @ManyToOne
-    @JoinColumn(name = "id_amigo", referencedColumnName = "id")
+    @JoinColumn(name = "id_amigo", referencedColumnName = "id", insertable = false, updatable = false)
     private Usuario amigo;
 
     @Column(name = "data_criacao")
