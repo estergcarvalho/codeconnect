@@ -42,4 +42,13 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Post> posts;
 
+    private String profissao;
+
+    private String pais;
+
+    private String estado;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<RedeSocial> redesSociais;
+
 }
