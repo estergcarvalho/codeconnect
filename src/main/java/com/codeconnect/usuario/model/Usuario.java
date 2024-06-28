@@ -1,6 +1,7 @@
 package com.codeconnect.usuario.model;
 
 import com.codeconnect.post.model.Post;
+import com.codeconnect.redesocial.model.RedeSocial;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

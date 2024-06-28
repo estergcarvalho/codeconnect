@@ -1,5 +1,6 @@
-package com.codeconnect.usuario.model;
+package com.codeconnect.redesocial.model;
 
+import com.codeconnect.usuario.model.Usuario;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

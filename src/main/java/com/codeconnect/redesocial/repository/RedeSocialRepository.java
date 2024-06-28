@@ -1,6 +1,6 @@
-package com.codeconnect.usuario.repository;
+package com.codeconnect.redesocial.repository;
 
-import com.codeconnect.usuario.model.RedeSocial;
+import com.codeconnect.redesocial.model.RedeSocial;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
