@@ -1,6 +1,7 @@
 package com.codeconnect.usuario.model;
 
 import com.codeconnect.post.model.Post;
+import com.codeconnect.redesocial.model.RedeSocial;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,5 +42,14 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Post> posts;
+
+    private String profissao;
+
+    private String pais;
+
+    private String estado;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<RedeSocial> redesSociais;
 
 }
