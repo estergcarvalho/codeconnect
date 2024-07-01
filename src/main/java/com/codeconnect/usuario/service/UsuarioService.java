@@ -1,8 +1,13 @@
 package com.codeconnect.usuario.service;
 
+import com.codeconnect.redesocial.dto.RedeSocialResponse;
+import com.codeconnect.redesocial.model.RedeSocial;
+import com.codeconnect.redesocial.repository.RedeSocialRepository;
 import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.dto.UsuarioAmigoDetalheResponse;
 import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
+import com.codeconnect.usuario.dto.UsuarioEditarResponse;
+import com.codeconnect.usuario.dto.UsuarioEditarResquest;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
@@ -16,8 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
@@ -25,6 +32,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private RedeSocialRepository redeSocialRepository;
 
     @Autowired
     private UsuarioAmigoRepository usuarioAmigoRepository;
@@ -77,13 +87,46 @@ public class UsuarioService {
             .map(amigo -> UsuarioAmigoDetalheResponse.builder()
                 .nome(amigo.getAmigo().getNome())
                 .build())
-            .collect(Collectors.toList());
+            .collect(toList());
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
 
         return UsuarioAmigoResponse.builder()
             .amigos(usuarioAmigoDetalheResponse)
             .total(totalAmigos)
+            .build();
+    }
+
+    public UsuarioEditarResponse editar(UsuarioEditarResquest usuarioEditarResquest) {
+        Usuario usuario = tokenService.obterUsuarioToken();
+
+        usuario.setProfissao(usuarioEditarResquest.getProfissao());
+        usuario.setPais(usuarioEditarResquest.getPais());
+        usuario.setEstado(usuarioEditarResquest.getEstado());
+
+        List<RedeSocial> redesSociaisRequest = usuarioEditarResquest.getRedesSociais().stream()
+            .map(redeSocial -> RedeSocial.builder()
+                .usuario(usuario)
+                .nome(redeSocial.getNome())
+                .link(redeSocial.getLink())
+                .build())
+            .toList();
+
+        usuario.getRedesSociais().clear();
+        usuario.getRedesSociais().addAll(redesSociaisRequest);
+
+        Usuario usuarioEditado = repository.save(usuario);
+
+        return UsuarioEditarResponse.builder()
+            .profissao(usuarioEditado.getProfissao())
+            .pais(usuarioEditado.getPais())
+            .estado(usuarioEditado.getEstado())
+            .redesSociais(usuarioEditado.getRedesSociais().stream()
+                .map(redeSocial -> RedeSocialResponse.builder()
+                    .nome(redeSocial.getNome())
+                    .link(redeSocial.getLink())
+                    .build())
+                .toList())
             .build();
     }
 
