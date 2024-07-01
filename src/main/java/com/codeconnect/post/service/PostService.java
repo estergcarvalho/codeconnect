@@ -86,7 +86,7 @@ public class PostService {
                 .dataCriacao(post.getDataCriacao())
                 .descricao(post.getDescricao())
                 .usuario(PostRecenteDetalheUsuarioResponse.builder()
-                    .id(post.getId())
+                    .id(post.getIdUsuario())
                     .nome(post.getUsuarioNome())
                     .profissao(post.getProfissao())
                     .build())
