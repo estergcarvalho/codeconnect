@@ -1,5 +1,6 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
@@ -146,22 +147,20 @@ public class PostServiceTest {
     public void deveListarPostRecentesDosAmigos() {
         UUID usuarioId = UUID.randomUUID();
         String nomeUsuario = "João";
-        String nomeAmigo = "Maria";
         UUID amigoId = UUID.randomUUID();
+        String nomeAmigo = "Maria";
         String descricao = "teste descricao";
         Timestamp dataCriacao = new Timestamp(System.currentTimeMillis());
 
         PostRecenteResponse postRecenteResponseUsuarioMock = Mockito.mock(PostRecenteResponse.class);
-
-        when(postRecenteResponseUsuarioMock.getId()).thenReturn(UUID.randomUUID());
+        when(postRecenteResponseUsuarioMock.getId()).thenReturn(usuarioId);
         when(postRecenteResponseUsuarioMock.getIdUsuario()).thenReturn(usuarioId);
         when(postRecenteResponseUsuarioMock.getUsuarioNome()).thenReturn(nomeUsuario);
         when(postRecenteResponseUsuarioMock.getDescricao()).thenReturn(descricao);
         when(postRecenteResponseUsuarioMock.getDataCriacao()).thenReturn(dataCriacao);
 
         PostRecenteResponse postRecenteResponseAmigoMock = Mockito.mock(PostRecenteResponse.class);
-
-        when(postRecenteResponseAmigoMock.getId()).thenReturn(UUID.randomUUID());
+        when(postRecenteResponseAmigoMock.getId()).thenReturn(amigoId);
         when(postRecenteResponseAmigoMock.getIdUsuario()).thenReturn(amigoId);
         when(postRecenteResponseAmigoMock.getUsuarioNome()).thenReturn(nomeAmigo);
         when(postRecenteResponseAmigoMock.getDescricao()).thenReturn(descricao);
@@ -176,20 +175,22 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
         when(repository.recentes(usuarioLogado.getId())).thenReturn(List.of(postRecenteResponseUsuarioMock, postRecenteResponseAmigoMock));
 
-        List<PostRecenteResponse> recentes = postService.recentes();
+        List<PostRecenteDetalheResponse> recentes = postService.recentes();
 
         assertNotNull(recentes);
         assertEquals(2, recentes.size());
 
-        PostRecenteResponse primeiroPost = recentes.getFirst();
-        assertEquals(usuarioId, primeiroPost.getIdUsuario());
-        assertEquals(nomeUsuario, primeiroPost.getUsuarioNome());
+        PostRecenteDetalheResponse primeiroPost = recentes.getFirst();
+        assertEquals(usuarioId, primeiroPost.getId());
+        assertEquals(usuarioId, primeiroPost.getUsuario().getId());
+        assertEquals(nomeUsuario, primeiroPost.getUsuario().getNome());
         assertEquals(descricao, primeiroPost.getDescricao());
         assertEquals(dataCriacao, primeiroPost.getDataCriacao());
 
-        PostRecenteResponse segundoPost = recentes.get(1);
-        assertEquals(amigoId, segundoPost.getIdUsuario());
-        assertEquals(nomeAmigo, segundoPost.getUsuarioNome());
+        PostRecenteDetalheResponse segundoPost = recentes.get(1);
+        assertEquals(amigoId, segundoPost.getId());
+        assertEquals(amigoId, segundoPost.getUsuario().getId());
+        assertEquals(nomeAmigo, segundoPost.getUsuario().getNome());
         assertEquals(descricao, segundoPost.getDescricao());
         assertEquals(dataCriacao, segundoPost.getDataCriacao());
     }

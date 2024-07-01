@@ -12,16 +12,6 @@ public interface PostRecenteResponse {
     @Schema(description = "Id do post", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
     UUID getId();
 
-    @Schema(description = "Id usuário", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
-    @JsonProperty("id_usuario")
-    @Column(name = "idusuario")
-    UUID getIdUsuario();
-
-    @Schema(description = "Nome usuario", example = "João")
-    @JsonProperty("nome_usuario")
-    @Column(name = "usuarionome")
-    String getUsuarioNome();
-
     @Schema(description = "Descrição da postagem usuário", example = "Bom dia rede, hoje quero compartilhar meu novo projeto.")
     @Column(name = "descricao")
     String getDescricao();
@@ -30,5 +20,19 @@ public interface PostRecenteResponse {
     @Column(name = "datacriacao")
     @JsonProperty("data_criacao")
     Timestamp getDataCriacao();
+
+    @Schema(description = "Id usuário", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
+    @JsonProperty("id_usuario")
+    @Column(name = "idusuario")
+    UUID getIdUsuario();
+
+    @Schema(description = "Nome usuário", example = "João")
+    @JsonProperty("nome_usuario")
+    @Column(name = "usuarionome")
+    String getUsuarioNome();
+
+    @Schema(description = "Profissão do usuário", example = "Desenvolvedor")
+    @Column(name = "profissao")
+    String getProfissao();
 
 }
