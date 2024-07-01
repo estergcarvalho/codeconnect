@@ -1,6 +1,7 @@
 package com.codeconnect.usuario.dto;
 
 import com.codeconnect.redesocial.dto.RedeSocialResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class UsuarioEditarResponse {
     private String estado;
 
     @Schema(description = "Redes sociais do usuário", example = "GitHub")
+    @JsonProperty("redes_sociais")
     private List<RedeSocialResponse> redesSociais;
 
 }
