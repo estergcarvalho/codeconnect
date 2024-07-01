@@ -1,6 +1,8 @@
 package com.codeconnect.usuario.controller;
 
 import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
+import com.codeconnect.usuario.dto.UsuarioEditarResponse;
+import com.codeconnect.usuario.dto.UsuarioEditarResquest;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.service.UsuarioService;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +57,21 @@ public class UsuarioController {
         UsuarioAmigoResponse amigo = service.listarAmigos();
 
         return ResponseEntity.ok(amigo);
+    }
+
+    @Operation(
+        summary = "Atualiza dados do usuário",
+        description = "Atualiza os detalhes de um usuario com base no ID fornecido",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuario não encontrado ")
+        }
+    )
+    @PutMapping
+    public ResponseEntity<UsuarioEditarResponse> editar(@RequestBody UsuarioEditarResquest usuarioEditarResquest) {
+        UsuarioEditarResponse usuario = service.editar(usuarioEditarResquest);
+
+        return ResponseEntity.ok(usuario);
     }
 
 }
