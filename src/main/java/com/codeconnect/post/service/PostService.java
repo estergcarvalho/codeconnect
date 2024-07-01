@@ -1,5 +1,7 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.post.dto.PostRecenteDetalheResponse;
+import com.codeconnect.post.dto.PostRecenteDetalheUsuarioResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
@@ -71,12 +73,25 @@ public class PostService {
             .toList();
     }
 
-    public List<PostRecenteResponse> recentes() {
+    public List<PostRecenteDetalheResponse> recentes() {
         log.info("Iniciando a lista de post do usuário");
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        return repository.recentes(usuario.getId());
+        List<PostRecenteResponse> postRecentes = repository.recentes(usuario.getId());
+
+        return postRecentes.stream()
+            .map(post -> PostRecenteDetalheResponse.builder()
+                .id(post.getId())
+                .dataCriacao(post.getDataCriacao())
+                .descricao(post.getDescricao())
+                .usuario(PostRecenteDetalheUsuarioResponse.builder()
+                    .id(post.getIdUsuario())
+                    .nome(post.getUsuarioNome())
+                    .profissao(post.getProfissao())
+                    .build())
+                .build())
+            .toList();
     }
 
 }

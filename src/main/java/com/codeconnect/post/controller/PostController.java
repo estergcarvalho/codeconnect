@@ -1,6 +1,6 @@
 package com.codeconnect.post.controller;
 
-import com.codeconnect.post.dto.PostRecenteResponse;
+import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
 import com.codeconnect.post.service.PostService;
@@ -66,8 +66,8 @@ public class PostController {
         }
     )
     @GetMapping("/recentes")
-    public ResponseEntity<List<PostRecenteResponse>> recentes() {
-        List<PostRecenteResponse> postagensRecentes = service.recentes();
+    public ResponseEntity<List<PostRecenteDetalheResponse>> recentes() {
+        List<PostRecenteDetalheResponse> postagensRecentes = service.recentes();
 
         return ResponseEntity.ok(postagensRecentes);
     }
