@@ -2,17 +2,18 @@ package com.codeconnect.usuario.service;
 
 import com.codeconnect.redesocial.dto.RedeSocialResponse;
 import com.codeconnect.redesocial.model.RedeSocial;
-import com.codeconnect.redesocial.repository.RedeSocialRepository;
 import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.dto.UsuarioAmigoDetalheResponse;
 import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioEditarResponse;
 import com.codeconnect.usuario.dto.UsuarioEditarResquest;
+import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
+import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.repository.UsuarioAmigoRepository;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -82,6 +84,8 @@ public class UsuarioService {
             .filter(status -> status.getStatus() == UsuarioAmigoStatusEnum.AMIGO)
             .map(amigo -> UsuarioAmigoDetalheResponse.builder()
                 .nome(amigo.getAmigo().getNome())
+                .idAmigo(amigo.getAmigo().getId())
+                .statusRelacionamento(amigo.getStatus())
                 .build())
             .collect(toList());
 
@@ -123,6 +127,64 @@ public class UsuarioService {
                     .link(redeSocial.getLink())
                     .build())
                 .toList())
+            .build();
+    }
+
+    public UsuarioAmigoResponse listarRelacionamentos(UUID idUsuario) {
+        Usuario usuario = tokenService.obterUsuarioToken();
+
+        List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
+            .map(amigo -> UsuarioAmigoDetalheResponse.builder()
+                .nome(amigo.getAmigo().getNome())
+                .idAmigo(amigo.getAmigo().getId())
+                .statusRelacionamento(amigo.getStatus())
+                .build())
+            .collect(toList());
+
+        int totalAmigos = usuarioAmigoDetalheResponse.size();
+
+        return UsuarioAmigoResponse.builder()
+            .amigos(usuarioAmigoDetalheResponse)
+            .total(totalAmigos)
+            .build();
+    }
+
+    public UsuarioPerfilResponse buscarPorId(UUID idUsuario) {
+        Usuario usuario = repository.findById(idUsuario)
+            .orElseThrow(UsuarioNaoEncontradoException::new);
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuario);
+
+        UsuarioAmigoStatusEnum statusRelacionamento = null;
+
+        if (!isUsuarioLogado) {
+            List<UsuarioAmigoDetalheResponse> amigos = this.listarRelacionamentos(idUsuario).getAmigos();
+
+            for (UsuarioAmigoDetalheResponse amigoDetalheResponse : amigos) {
+                if (idUsuario.equals(amigoDetalheResponse.getIdAmigo())) {
+                    statusRelacionamento = amigoDetalheResponse.getStatusRelacionamento();
+                }
+            }
+        }
+
+        List<RedeSocialResponse> redeSocialResponses = usuario.getRedesSociais().stream()
+            .map(redeSocial -> RedeSocialResponse.builder()
+                .nome(redeSocial.getNome())
+                .link(redeSocial.getLink())
+                .build())
+            .toList();
+
+        return UsuarioPerfilResponse.builder()
+            .id(usuario.getId())
+            .nome(usuario.getNome())
+            .profissao(usuario.getProfissao())
+            .estado(usuario.getEstado())
+            .pais(usuario.getPais())
+            .usuarioLogado(isUsuarioLogado)
+            .statusRelacionamento(statusRelacionamento)
+            .redesSociais(redeSocialResponses)
             .build();
     }
 

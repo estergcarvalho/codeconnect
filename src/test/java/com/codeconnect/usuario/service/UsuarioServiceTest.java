@@ -6,9 +6,12 @@ import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioEditarResponse;
 import com.codeconnect.usuario.dto.UsuarioEditarResquest;
+import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
+import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
+import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.model.UsuarioAmigo;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -23,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,8 +34,11 @@ import java.util.UUID;
 import static com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum.AMIGO;
 import static com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum.PENDENTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -52,6 +59,8 @@ public class UsuarioServiceTest {
     private TokenService tokenService;
 
     private static final UUID ID_USUARIO = UUID.randomUUID();
+    private static final UUID ID_USUARIO_AMIGO = UUID.randomUUID();
+    private static final UUID ID_USUARIO_PENDENTE = UUID.randomUUID();
     private static final String NOME_USUARIO = "Joao";
     private static final String EMAIL_USUARIO = "joao@teste.com.br";
     private static final String SENHA_USUARIO = "$2y$10$9S9ivlvoxeZX8.UQx4PiReUle758Ux8py.Os.YACoQOaZtv6e0vdK";
@@ -191,6 +200,159 @@ public class UsuarioServiceTest {
         assertEquals(1, usuarioEditarResponse.getRedesSociais().size());
         assertEquals(REDES_SOCIAIS, usuarioEditarResponse.getRedesSociais().getFirst().getNome());
         assertEquals(LINK, usuarioEditarResponse.getRedesSociais().getFirst().getLink());
+    }
+
+    @Test
+    @DisplayName("Deve retornar perfil de um amigo com redes sociais")
+    public void deveRetornarPerfilDeUmAmigo() {
+        UUID idUsuario = UUID.randomUUID();
+
+        Usuario usuarioNaoLogado = Usuario.builder()
+            .id(idUsuario)
+            .nome(NOME_USUARIO)
+            .build();
+
+        UsuarioAmigo amigo = UsuarioAmigo.builder()
+            .amigo(Usuario.builder()
+                .id(ID_USUARIO_AMIGO)
+                .nome("Ester")
+                .redesSociais(Collections.singletonList(
+                    RedeSocial.builder()
+                        .nome(REDES_SOCIAIS)
+                        .link(LINK)
+                        .build()
+                ))
+                .build()
+            )
+            .status(UsuarioAmigoStatusEnum.AMIGO)
+            .build();
+
+        List<UsuarioAmigo> usuarioAmigos = Collections.singletonList(amigo);
+        usuarioNaoLogado.setAmigos(usuarioAmigos);
+
+        Usuario usuarioAmigo = Usuario.builder()
+            .id(ID_USUARIO_AMIGO)
+            .nome("Ester")
+            .profissao(PROFISSAO)
+            .pais(PAIS)
+            .estado(ESTADO)
+            .redesSociais(Collections.singletonList(
+                RedeSocial.builder()
+                    .nome(REDES_SOCIAIS)
+                    .link(LINK)
+                    .build()
+            ))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioNaoLogado);
+        when(usuarioRepository.findById(ID_USUARIO_AMIGO)).thenReturn(Optional.of(usuarioAmigo));
+
+        UsuarioPerfilResponse usuarioPerfilResponse = usuarioService.buscarPorId(ID_USUARIO_AMIGO);
+
+        assertEquals(ID_USUARIO_AMIGO, usuarioPerfilResponse.getId());
+        assertEquals("Ester", usuarioPerfilResponse.getNome());
+        assertEquals(PROFISSAO, usuarioPerfilResponse.getProfissao());
+        assertEquals(ESTADO, usuarioPerfilResponse.getEstado());
+        assertEquals(PAIS, usuarioPerfilResponse.getPais());
+        assertFalse(usuarioPerfilResponse.isUsuarioLogado());
+        assertEquals(UsuarioAmigoStatusEnum.AMIGO, usuarioPerfilResponse.getStatusRelacionamento());
+        assertEquals(1, usuarioPerfilResponse.getRedesSociais().size());
+        assertEquals(REDES_SOCIAIS, usuarioPerfilResponse.getRedesSociais().getFirst().getNome());
+        assertEquals(LINK, usuarioPerfilResponse.getRedesSociais().getFirst().getLink());
+    }
+
+    @Test
+    @DisplayName("Deve retornar perfil de um usuário com relacionamento pendente")
+    public void deveRetornarPerfilDeUmUsuarioPendente() {
+        UUID idUsuario = UUID.randomUUID();
+
+        Usuario usuarioNaoLogado = Usuario.builder()
+            .id(idUsuario)
+            .nome(NOME_USUARIO)
+            .build();
+
+        UsuarioAmigo amizadePendente = UsuarioAmigo.builder()
+            .amigo(Usuario.builder()
+                .id(ID_USUARIO_PENDENTE)
+                .nome("Maria").build()
+            )
+            .status(UsuarioAmigoStatusEnum.PENDENTE)
+            .build();
+
+        List<UsuarioAmigo> usuarioAmigos = Collections.singletonList(amizadePendente);
+        usuarioNaoLogado.setAmigos(usuarioAmigos);
+
+        Usuario usuarioPendente = Usuario.builder()
+            .id(ID_USUARIO_PENDENTE)
+            .nome("Maria")
+            .profissao(PROFISSAO)
+            .pais(PAIS)
+            .estado(ESTADO)
+            .redesSociais(Collections.singletonList(
+                RedeSocial.builder()
+                    .nome(REDES_SOCIAIS)
+                    .link(LINK)
+                    .build()
+            ))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioNaoLogado);
+        when(usuarioRepository.findById(ID_USUARIO_PENDENTE)).thenReturn(Optional.of(usuarioPendente));
+
+        UsuarioPerfilResponse usuarioPerfilResponse = usuarioService.buscarPorId(ID_USUARIO_PENDENTE);
+
+        assertEquals(ID_USUARIO_PENDENTE, usuarioPerfilResponse.getId());
+        assertEquals("Maria", usuarioPerfilResponse.getNome());
+        assertEquals(PROFISSAO, usuarioPerfilResponse.getProfissao());
+        assertEquals(ESTADO, usuarioPerfilResponse.getEstado());
+        assertEquals(PAIS, usuarioPerfilResponse.getPais());
+        assertFalse(usuarioPerfilResponse.isUsuarioLogado());
+        assertEquals(UsuarioAmigoStatusEnum.PENDENTE, usuarioPerfilResponse.getStatusRelacionamento());
+        assertEquals(1, usuarioPerfilResponse.getRedesSociais().size());
+        assertEquals(REDES_SOCIAIS, usuarioPerfilResponse.getRedesSociais().getFirst().getNome());
+        assertEquals(LINK, usuarioPerfilResponse.getRedesSociais().getFirst().getLink());
+    }
+
+    @Test
+    @DisplayName("Deve retornar perfil de usuário quando id corresponde ao usuário logado")
+    public void deveRetornarPerfilUsuarioLogado() {
+        UUID idUsuario = UUID.randomUUID();
+
+        Usuario usuarioLogado = Usuario.builder()
+            .id(idUsuario)
+            .nome(NOME_USUARIO)
+            .email(EMAIL_USUARIO)
+            .senha(SENHA_USUARIO)
+            .redesSociais(Collections.singletonList(
+                RedeSocial.builder()
+                    .nome(REDES_SOCIAIS)
+                    .link(LINK)
+                    .build()
+            ))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
+        when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuarioLogado));
+
+        UsuarioPerfilResponse usuarioPerfilResponse = usuarioService.buscarPorId(idUsuario);
+
+        assertTrue(usuarioPerfilResponse.isUsuarioLogado());
+        assertNull(usuarioPerfilResponse.getStatusRelacionamento());
+        assertEquals(usuarioLogado.getId(), usuarioPerfilResponse.getId());
+        assertEquals(usuarioLogado.getNome(), usuarioPerfilResponse.getNome());
+        assertEquals(1, usuarioPerfilResponse.getRedesSociais().size());
+        assertEquals(REDES_SOCIAIS, usuarioPerfilResponse.getRedesSociais().getFirst().getNome());
+        assertEquals(LINK, usuarioPerfilResponse.getRedesSociais().getFirst().getLink());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao buscar usuário quando id do usuário inválido")
+    public void deveLancarExcecaoAoBuscarUsuarioNaoEncontrado() {
+        UUID idUsuario = UUID.randomUUID();
+
+        when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.empty());
+
+        assertThrows(UsuarioNaoEncontradoException.class, () -> usuarioService.buscarPorId(idUsuario));
     }
 
 }
