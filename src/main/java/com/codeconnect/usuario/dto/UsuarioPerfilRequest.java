@@ -30,11 +30,11 @@ public class UsuarioPerfilRequest {
     @Schema(description = "Estado do usuário", example = "São Paulo")
     private String estado;
 
-    @Schema(description = "Retornar True para usuário logado e False para usuário não logado")
+    @Schema(description = "Retornar usuario logado")
     @JsonProperty("usuario_logado")
     private boolean usuarioLogado;
 
-    @Schema(description = "Retorna status se usuário é AMIGO ou não amigo PENDENTE")
+    @Schema(description = "Retorna status do relacionamento de amizade")
     @JsonProperty("status_relacionamento")
     @Enumerated(EnumType.ORDINAL)
     private UsuarioAmigoStatusEnum statusRelacionamento;
