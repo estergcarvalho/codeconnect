@@ -130,7 +130,7 @@ public class UsuarioService {
             .build();
     }
 
-    public UsuarioAmigoResponse listarRelacionamentos(UUID idUsuario) {
+    public UsuarioAmigoResponse listarRelacionamentos() {
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
@@ -160,7 +160,7 @@ public class UsuarioService {
         UsuarioAmigoStatusEnum statusRelacionamento = null;
 
         if (!isUsuarioLogado) {
-            List<UsuarioAmigoDetalheResponse> amigos = this.listarRelacionamentos(idUsuario).getAmigos();
+            List<UsuarioAmigoDetalheResponse> amigos = this.listarRelacionamentos().getAmigos();
 
             for (UsuarioAmigoDetalheResponse amigoDetalheResponse : amigos) {
                 if (idUsuario.equals(amigoDetalheResponse.getIdAmigo())) {

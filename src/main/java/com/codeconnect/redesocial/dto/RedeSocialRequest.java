@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 public class RedeSocialRequest {
 
     @Schema(description = "Nome da rede social", example = "Github")
-    @NotBlank(message = "Nome do usuário não deve ser nulo ou vazio")
+    @NotBlank(message = "Nome da rede social não deve ser nulo ou vazio")
     private String nome;
 
     @Schema(description = "Link da rede social", example = "https://www.github.com/in/joao")
-    @NotBlank(message = "Nome do usuário não deve ser nulo ou vazio")
+    @NotBlank(message = "Link da rede social não deve ser nulo ou vazio")
     private String link;
 
 }
