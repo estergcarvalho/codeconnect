@@ -15,7 +15,7 @@ public class RedeSocialResponse {
     @Schema(description = "Nome da rede social", example = "GitHub")
     private String nome;
 
-    @Schema(description = "Link da rede social", example = "https://www.github.com/in/joao")
+    @Schema(description = "Link da rede social", example = "https://www.github.com/joao")
     private String link;
 
 }

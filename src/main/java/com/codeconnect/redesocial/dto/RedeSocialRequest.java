@@ -17,7 +17,7 @@ public class RedeSocialRequest {
     @NotBlank(message = "Nome da rede social não deve ser nulo ou vazio")
     private String nome;
 
-    @Schema(description = "Link da rede social", example = "https://www.github.com/in/joao")
+    @Schema(description = "Link da rede social", example = "https://www.github.com/joao")
     @NotBlank(message = "Link da rede social não deve ser nulo ou vazio")
     private String link;
 

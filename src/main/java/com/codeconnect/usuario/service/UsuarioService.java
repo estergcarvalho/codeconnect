@@ -130,25 +130,6 @@ public class UsuarioService {
             .build();
     }
 
-    public UsuarioAmigoResponse listarRelacionamentos() {
-        Usuario usuario = tokenService.obterUsuarioToken();
-
-        List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
-            .map(amigo -> UsuarioAmigoDetalheResponse.builder()
-                .nome(amigo.getAmigo().getNome())
-                .idAmigo(amigo.getAmigo().getId())
-                .statusRelacionamento(amigo.getStatus())
-                .build())
-            .collect(toList());
-
-        int totalAmigos = usuarioAmigoDetalheResponse.size();
-
-        return UsuarioAmigoResponse.builder()
-            .amigos(usuarioAmigoDetalheResponse)
-            .total(totalAmigos)
-            .build();
-    }
-
     public UsuarioPerfilResponse buscarPorId(UUID idUsuario) {
         Usuario usuario = repository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
@@ -185,6 +166,25 @@ public class UsuarioService {
             .usuarioLogado(isUsuarioLogado)
             .statusRelacionamento(statusRelacionamento)
             .redesSociais(redeSocialResponses)
+            .build();
+    }
+
+    private UsuarioAmigoResponse listarRelacionamentos() {
+        Usuario usuario = tokenService.obterUsuarioToken();
+
+        List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
+            .map(amigo -> UsuarioAmigoDetalheResponse.builder()
+                .nome(amigo.getAmigo().getNome())
+                .idAmigo(amigo.getAmigo().getId())
+                .statusRelacionamento(amigo.getStatus())
+                .build())
+            .collect(toList());
+
+        int totalAmigos = usuarioAmigoDetalheResponse.size();
+
+        return UsuarioAmigoResponse.builder()
+            .amigos(usuarioAmigoDetalheResponse)
+            .total(totalAmigos)
             .build();
     }
 
