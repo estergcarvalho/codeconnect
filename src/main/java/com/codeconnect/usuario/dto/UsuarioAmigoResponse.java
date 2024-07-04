@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class UsuarioAmigoResponse {
 
-    @Schema(description = "Lista de detalhes dos amigos")
+    @Schema(description = "Lista de amigos")
     private List<UsuarioAmigoDetalheResponse> amigos;
 
     @Schema(description = "Total de amigos", example = "5")
