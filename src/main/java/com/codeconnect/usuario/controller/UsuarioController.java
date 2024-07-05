@@ -3,6 +3,7 @@ package com.codeconnect.usuario.controller;
 import com.codeconnect.usuario.dto.UsuarioAmigoResponse;
 import com.codeconnect.usuario.dto.UsuarioEditarResponse;
 import com.codeconnect.usuario.dto.UsuarioEditarResquest;
+import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.service.UsuarioService;
@@ -14,11 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -70,6 +74,21 @@ public class UsuarioController {
     @PutMapping
     public ResponseEntity<UsuarioEditarResponse> editar(@RequestBody UsuarioEditarResquest usuarioEditarResquest) {
         UsuarioEditarResponse usuario = service.editar(usuarioEditarResquest);
+
+        return ResponseEntity.ok(usuario);
+    }
+
+    @Operation(
+        summary = "Retorna o perfil do usuario dado o id",
+        description = "Retorna o perfil do usuario dado o id fornecido",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Usuário localizado"),
+            @ApiResponse(responseCode = "404", description = "Usuário não localizado")
+        }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioPerfilResponse> buscarPorId(@PathVariable UUID id) {
+        UsuarioPerfilResponse usuario = service.buscarPorId(id);
 
         return ResponseEntity.ok(usuario);
     }
