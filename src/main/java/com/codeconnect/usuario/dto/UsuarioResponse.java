@@ -21,4 +21,5 @@ public class UsuarioResponse {
 
     @Schema(description = "Foto do usuário", example = "foto.png")
     private String foto;
+
 }

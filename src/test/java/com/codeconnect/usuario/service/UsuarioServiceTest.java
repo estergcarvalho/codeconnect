@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -360,29 +361,29 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve salvar a foto do usuário logado")
-    public void deveSalvarFotoUsuarioLogado() throws IOException {
-        byte[] fotoUsuario = "ana.jpg".getBytes();
+    @DisplayName("Deve adiconar foto do usuário")
+    public void deveAdicionarFotoUsuario() throws IOException {
+        byte[] fotoBytes = "ana.png".getBytes();
 
-        String foto = Base64.getEncoder().encodeToString(fotoUsuario);
+        String fotoBase64 = Base64.getEncoder().encodeToString(fotoBytes);
 
-        MultipartFile formatoFotoAceito = new MockMultipartFile(
-            "imagem",
-            "ana.jpg",
-            "ana/jpeg",
-            fotoUsuario);
+        MultipartFile fotoUsuario = new MockMultipartFile(
+            "ana",
+            "ana.png",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            fotoBytes);
 
         Usuario usuario = Usuario.builder()
             .id(ID_USUARIO)
             .nome(NOME_USUARIO)
             .email(EMAIL_USUARIO)
-            .foto(foto)
+            .foto(fotoBase64)
             .build();
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(usuarioRepository.save(any())).thenReturn(usuario);
 
-        UsuarioResponse usuarioResponse = usuarioService.salvarFoto(formatoFotoAceito);
+        UsuarioResponse usuarioResponse = usuarioService.adicionarFoto(fotoUsuario);
 
         assertEquals(usuario.getId(), usuarioResponse.getId());
         assertEquals(usuario.getNome(), usuarioResponse.getNome());

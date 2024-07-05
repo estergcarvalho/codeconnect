@@ -44,8 +44,6 @@ public class TokenService {
                 .withExpiresAt(expiracaoToken)
                 .sign(assinatura);
 
-            log.info("Token gerado com sucesso");
-
             return LoginResponse.builder()
                 .accessToken(token)
                 .tokenType("Bearer")
@@ -64,15 +62,11 @@ public class TokenService {
         try {
             var assinatura = Algorithm.HMAC256(tokenSenha);
 
-            var tokenUsuario = JWT.require(assinatura)
+            return JWT.require(assinatura)
                 .withIssuer(EMISSOR)
                 .build()
                 .verify(token)
                 .getSubject();
-
-            log.info("Assunto do token obtido com sucesso");
-
-            return tokenUsuario;
         } catch (Exception exception) {
             log.error("Erro ao obter o assunto do token");
 
@@ -81,12 +75,8 @@ public class TokenService {
     }
 
     public Usuario obterUsuarioToken() {
-        log.info("Iniciando a obtenção do usuário logado a partir do token");
-
         Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
         String usuario = autenticacao.getName();
-
-        log.info("Email do usuário obtido do token: {}", usuario);
 
         return usuarioRepository.findByEmail(usuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);

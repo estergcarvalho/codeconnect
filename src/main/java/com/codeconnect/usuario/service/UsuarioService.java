@@ -11,6 +11,7 @@ import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
+import com.codeconnect.usuario.exception.ErroAoAdicionarFotoUsuarioException;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
@@ -23,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -65,8 +65,6 @@ public class UsuarioService {
                 .build();
 
             Usuario usuarioSalvo = repository.save(usuario);
-
-            log.info("Usuario {} cadastrado com sucesso", usuario.getNome());
 
             return UsuarioResponse.builder()
                 .id(usuarioSalvo.getId())
@@ -147,19 +145,13 @@ public class UsuarioService {
         Usuario usuario = repository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
-        log.info("Usuário encontrado: {}", usuario.getNome());
-
         Usuario usuarioLogado = tokenService.obterUsuarioToken();
-
-        log.info("Usuário logado: {}", usuarioLogado.getNome());
 
         boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuario);
 
         UsuarioAmigoStatusEnum statusRelacionamento = null;
 
         if (!isUsuarioLogado) {
-            log.info("Verificando status de relacionamento entre o usuário logado e o usuário buscado");
-
             List<UsuarioAmigoDetalheResponse> amigos = this.listarRelacionamentos().getAmigos();
 
             for (UsuarioAmigoDetalheResponse amigoDetalheResponse : amigos) {
@@ -178,8 +170,6 @@ public class UsuarioService {
                 .build())
             .toList();
 
-        log.info("Busca de usuario por ID concluída com sucesso");
-
         return UsuarioPerfilResponse.builder()
             .id(usuario.getId())
             .nome(usuario.getNome())
@@ -192,24 +182,29 @@ public class UsuarioService {
             .build();
     }
 
-    public UsuarioResponse salvarFoto(MultipartFile foto) throws IOException {
-        log.info("Inicio salvamento de foto de usuario logado");
+    public UsuarioResponse adicionarFoto(MultipartFile foto) {
+        log.info("Inicio adicionar foto do usuario");
 
-        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+        try {
+            Usuario usuario = tokenService.obterUsuarioToken();
 
-        String fotoUsuario = Base64.getEncoder().encodeToString(foto.getBytes());
+            String fotoUsuario = Base64.getEncoder().encodeToString(foto.getBytes());
+            usuario.setFoto(fotoUsuario);
 
-        usuarioLogado.setFoto(fotoUsuario);
-        repository.save(usuarioLogado);
+            repository.save(usuario);
 
-        log.info("Foto de usuario {} salva com sucesso", usuarioLogado.getNome());
+            return UsuarioResponse.builder()
+                .id(usuario.getId())
+                .nome(usuario.getNome())
+                .email(usuario.getEmail())
+                .foto(fotoUsuario)
+                .build();
+        } catch (Exception exception) {
+            log.error("Erro ao adicionar foto do usuario: {}", exception.getMessage());
 
-        return UsuarioResponse.builder()
-            .id(usuarioLogado.getId())
-            .nome(usuarioLogado.getNome())
-            .email(usuarioLogado.getEmail())
-            .foto(fotoUsuario)
-            .build();
+            throw new ErroAoAdicionarFotoUsuarioException();
+        }
+
     }
 
     private UsuarioAmigoResponse listarRelacionamentos() {

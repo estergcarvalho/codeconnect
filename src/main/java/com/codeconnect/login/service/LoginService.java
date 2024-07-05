@@ -29,15 +29,9 @@ public class LoginService {
             UsernamePasswordAuthenticationToken tokenDeAutenticacao =
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha());
 
-            log.info("Token de autenticação criado para o usuário: {}", loginRequest.getEmail());
-
             Authentication autenticacao = authenticationManager.authenticate(tokenDeAutenticacao);
 
-            log.info("Autenticação bem-sucedida para o usuário: {}", loginRequest.getEmail());
-
             UserDetailsImpl detalhesDoUsuario = (UserDetailsImpl) autenticacao.getPrincipal();
-
-            log.info("Gerando token para o usuário: {}", loginRequest.getEmail());
             
             return tokenService.gerarToken(detalhesDoUsuario);
         } catch (Exception exception) {

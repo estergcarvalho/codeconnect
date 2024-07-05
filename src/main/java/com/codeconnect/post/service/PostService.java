@@ -43,8 +43,6 @@ public class PostService {
 
             Post salvarPost = repository.save(post);
 
-            log.info("Postagem salva com sucesso");
-
             return PostResponse.builder()
                 .id(salvarPost.getId())
                 .dataCriacao(salvarPost.getDataCriacao())
@@ -62,10 +60,7 @@ public class PostService {
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        log.info("Usuário logado : {}", usuario.getNome());
-
         List<Post> postagens = repository.findAllByUsuarioId(usuario.getId());
-        log.info("Total de postagens encontrados: {}", postagens.size());
 
         return postagens.stream()
             .map(post -> PostResponse.builder()
@@ -81,13 +76,9 @@ public class PostService {
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
-        log.info("Usuário logado: {}", usuario.getNome());
-
         List<PostRecenteResponse> postRecentes = repository.recentes(usuario.getId());
 
-        log.info("Total de posts recentes encontrados: {}", postRecentes.size());
-
-        List<PostRecenteDetalheResponse> postsDetalhados = postRecentes.stream()
+        return postRecentes.stream()
             .map(post -> PostRecenteDetalheResponse.builder()
                 .id(post.getId())
                 .dataCriacao(post.getDataCriacao())
@@ -99,10 +90,6 @@ public class PostService {
                     .build())
                 .build())
             .toList();
-
-        log.info("Lista de posts do usuário concluída com sucesso");
-
-        return postsDetalhados;
     }
 
 }

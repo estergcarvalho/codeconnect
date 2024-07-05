@@ -98,20 +98,19 @@ public class UsuarioController {
     }
 
     @Operation(
-        summary = "Salvar foto do usuário logado",
-        description = "Salvar foto com base no usuário logado",
+        summary = "Adicionar foto do usuário logado",
+        description = "Adicionar foto com base no usuário logado",
         responses = {
-            @ApiResponse(responseCode = "200" , description = "Foto foi salva com sucesso"),
+            @ApiResponse(responseCode = "200" , description = "Foto foi Adicionada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro na requisição, foto inválida"),
             @ApiResponse(responseCode = "500",description = "Erro interno servidor" )
         }
     )
-    @PostMapping(value = "/salvarFoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UsuarioResponse> salvarFoto(@RequestParam(value = "foto") MultipartFile foto) throws IOException {
-        UsuarioResponse usuario = service.salvarFoto(foto);
+    @PostMapping(value = "/adicionarFoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UsuarioResponse> adicionarFoto(@RequestParam(value = "foto") MultipartFile foto) {
+        UsuarioResponse usuario = service.adicionarFoto(foto);
 
         return ResponseEntity.ok(usuario);
-
     }
 
 }

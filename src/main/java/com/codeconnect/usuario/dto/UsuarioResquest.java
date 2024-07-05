@@ -23,4 +23,5 @@ public class UsuarioResquest {
 
     @Schema(description = "Foto do usuário", example = "foto.png")
     private String foto;
+
 }
