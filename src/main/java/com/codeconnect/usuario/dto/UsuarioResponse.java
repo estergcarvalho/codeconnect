@@ -19,4 +19,6 @@ public class UsuarioResponse {
     @Schema(description = "Email usuário", example = "joao@teste.com")
     private String email;
 
+    @Schema(description = "Imagem do produto", example = "imagem.jpg")
+    private String foto;
 }

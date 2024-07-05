@@ -21,7 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,6 +81,8 @@ public class UsuarioService {
     }
 
     public UsuarioAmigoResponse listarAmigos() {
+        log.info("Inicio listagem de amigos");
+
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
@@ -91,6 +96,8 @@ public class UsuarioService {
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
 
+        log.info("Listagem de amigos concluída com sucesso");
+
         return UsuarioAmigoResponse.builder()
             .amigos(usuarioAmigoDetalheResponse)
             .total(totalAmigos)
@@ -98,6 +105,8 @@ public class UsuarioService {
     }
 
     public UsuarioEditarResponse editar(UsuarioEditarResquest usuarioEditarResquest) {
+        log.info("Inicio edição de usuario");
+
         Usuario usuario = tokenService.obterUsuarioToken();
 
         usuario.setProfissao(usuarioEditarResquest.getProfissao());
@@ -117,6 +126,8 @@ public class UsuarioService {
 
         Usuario usuarioEditado = repository.save(usuario);
 
+        log.info("Usuario {} editado com sucesso", usuario.getNome());
+
         return UsuarioEditarResponse.builder()
             .profissao(usuarioEditado.getProfissao())
             .pais(usuarioEditado.getPais())
@@ -131,21 +142,31 @@ public class UsuarioService {
     }
 
     public UsuarioPerfilResponse buscarPorId(UUID idUsuario) {
+        log.info("Inicio busca de usuario por ID");
+
         Usuario usuario = repository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
+        log.info("Usuário encontrado: {}", usuario.getNome());
+
         Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        log.info("Usuário logado: {}", usuarioLogado.getNome());
 
         boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuario);
 
         UsuarioAmigoStatusEnum statusRelacionamento = null;
 
         if (!isUsuarioLogado) {
+            log.info("Verificando status de relacionamento entre o usuário logado e o usuário buscado");
+
             List<UsuarioAmigoDetalheResponse> amigos = this.listarRelacionamentos().getAmigos();
 
             for (UsuarioAmigoDetalheResponse amigoDetalheResponse : amigos) {
                 if (idUsuario.equals(amigoDetalheResponse.getIdAmigo())) {
                     statusRelacionamento = amigoDetalheResponse.getStatusRelacionamento();
+
+                    log.info("Status de relacionamento encontrado: {}", statusRelacionamento);
                 }
             }
         }
@@ -156,6 +177,8 @@ public class UsuarioService {
                 .link(redeSocial.getLink())
                 .build())
             .toList();
+
+        log.info("Busca de usuario por ID concluída com sucesso");
 
         return UsuarioPerfilResponse.builder()
             .id(usuario.getId())
@@ -169,7 +192,29 @@ public class UsuarioService {
             .build();
     }
 
+    public UsuarioResponse salvarFoto(MultipartFile foto) throws IOException {
+        log.info("Inicio salvamento de foto de usuario logado");
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        String fotoUsuario = Base64.getEncoder().encodeToString(foto.getBytes());
+
+        usuarioLogado.setFoto(fotoUsuario);
+        repository.save(usuarioLogado);
+
+        log.info("Foto de usuario {} salva com sucesso", usuarioLogado.getNome());
+
+        return UsuarioResponse.builder()
+            .id(usuarioLogado.getId())
+            .nome(usuarioLogado.getNome())
+            .email(usuarioLogado.getEmail())
+            .foto(fotoUsuario)
+            .build();
+    }
+
     private UsuarioAmigoResponse listarRelacionamentos() {
+        log.info("Inicio listagem de relacionamentos de usuario");
+
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
@@ -181,6 +226,8 @@ public class UsuarioService {
             .collect(toList());
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
+
+        log.info("Listagem de relacionamentos de usuario concluída com sucesso");
 
         return UsuarioAmigoResponse.builder()
             .amigos(usuarioAmigoDetalheResponse)

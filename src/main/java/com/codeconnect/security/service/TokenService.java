@@ -81,8 +81,12 @@ public class TokenService {
     }
 
     public Usuario obterUsuarioToken() {
+        log.info("Iniciando a obtenção do usuário logado a partir do token");
+
         Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
         String usuario = autenticacao.getName();
+
+        log.info("Email do usuário obtido do token: {}", usuario);
 
         return usuarioRepository.findByEmail(usuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);

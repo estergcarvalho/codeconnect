@@ -21,11 +21,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -353,6 +357,37 @@ public class UsuarioServiceTest {
         when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.empty());
 
         assertThrows(UsuarioNaoEncontradoException.class, () -> usuarioService.buscarPorId(idUsuario));
+    }
+
+    @Test
+    @DisplayName("Deve salvar a foto do usuário logado")
+    public void deveSalvarFotoUsuarioLogado() throws IOException {
+        byte[] fotoUsuario = "ana.jpg".getBytes();
+
+        String foto = Base64.getEncoder().encodeToString(fotoUsuario);
+
+        MultipartFile formatoFotoAceito = new MockMultipartFile(
+            "imagem",
+            "ana.jpg",
+            "ana/jpeg",
+            fotoUsuario);
+
+        Usuario usuario = Usuario.builder()
+            .id(ID_USUARIO)
+            .nome(NOME_USUARIO)
+            .email(EMAIL_USUARIO)
+            .foto(foto)
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(usuarioRepository.save(any())).thenReturn(usuario);
+
+        UsuarioResponse usuarioResponse = usuarioService.salvarFoto(formatoFotoAceito);
+
+        assertEquals(usuario.getId(), usuarioResponse.getId());
+        assertEquals(usuario.getNome(), usuarioResponse.getNome());
+        assertEquals(usuario.getEmail(), usuarioResponse.getEmail());
+        assertEquals(usuario.getFoto(), usuarioResponse.getFoto());
     }
 
 }
