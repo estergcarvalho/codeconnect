@@ -43,8 +43,6 @@ public class PostService {
 
             Post salvarPost = repository.save(post);
 
-            log.info("Postagem salva com sucesso");
-
             return PostResponse.builder()
                 .id(salvarPost.getId())
                 .dataCriacao(salvarPost.getDataCriacao())

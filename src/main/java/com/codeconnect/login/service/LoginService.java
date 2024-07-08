@@ -24,6 +24,8 @@ public class LoginService {
 
     public LoginResponse autenticarUsuario(LoginRequest loginRequest) {
         try {
+            log.info("Iniciando autenticação do usuário com email: {}", loginRequest.getEmail());
+
             UsernamePasswordAuthenticationToken tokenDeAutenticacao =
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha());
 

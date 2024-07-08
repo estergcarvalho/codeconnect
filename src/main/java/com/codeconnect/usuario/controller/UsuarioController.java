@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +21,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -89,6 +93,22 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioPerfilResponse> buscarPorId(@PathVariable UUID id) {
         UsuarioPerfilResponse usuario = service.buscarPorId(id);
+
+        return ResponseEntity.ok(usuario);
+    }
+
+    @Operation(
+        summary = "Adicionar foto do usuário logado",
+        description = "Adicionar foto com base no usuário logado",
+        responses = {
+            @ApiResponse(responseCode = "200" , description = "Foto foi Adicionada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro na requisição, foto inválida"),
+            @ApiResponse(responseCode = "500",description = "Erro interno servidor" )
+        }
+    )
+    @PostMapping(value = "/adicionarFoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UsuarioResponse> adicionarFoto(@RequestParam(value = "foto") MultipartFile foto) {
+        UsuarioResponse usuario = service.adicionarFoto(foto);
 
         return ResponseEntity.ok(usuario);
     }

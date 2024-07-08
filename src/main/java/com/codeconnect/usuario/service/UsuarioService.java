@@ -11,6 +11,7 @@ import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
+import com.codeconnect.usuario.exception.ErroAoAdicionarFotoUsuarioException;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
@@ -21,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,8 +66,6 @@ public class UsuarioService {
 
             Usuario usuarioSalvo = repository.save(usuario);
 
-            log.info("Usuario {} cadastrado com sucesso", usuario.getNome());
-
             return UsuarioResponse.builder()
                 .id(usuarioSalvo.getId())
                 .nome(usuarioSalvo.getNome())
@@ -78,6 +79,8 @@ public class UsuarioService {
     }
 
     public UsuarioAmigoResponse listarAmigos() {
+        log.info("Inicio listagem de amigos");
+
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
@@ -87,9 +90,11 @@ public class UsuarioService {
                 .idAmigo(amigo.getAmigo().getId())
                 .statusRelacionamento(amigo.getStatus())
                 .build())
-            .collect(toList());
+            .toList();
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
+
+        log.info("Listagem de amigos concluída com sucesso");
 
         return UsuarioAmigoResponse.builder()
             .amigos(usuarioAmigoDetalheResponse)
@@ -98,6 +103,8 @@ public class UsuarioService {
     }
 
     public UsuarioEditarResponse editar(UsuarioEditarResquest usuarioEditarResquest) {
+        log.info("Inicio edição de usuario");
+
         Usuario usuario = tokenService.obterUsuarioToken();
 
         usuario.setProfissao(usuarioEditarResquest.getProfissao());
@@ -117,6 +124,8 @@ public class UsuarioService {
 
         Usuario usuarioEditado = repository.save(usuario);
 
+        log.info("Usuario {} editado com sucesso", usuario.getNome());
+
         return UsuarioEditarResponse.builder()
             .profissao(usuarioEditado.getProfissao())
             .pais(usuarioEditado.getPais())
@@ -131,6 +140,8 @@ public class UsuarioService {
     }
 
     public UsuarioPerfilResponse buscarPorId(UUID idUsuario) {
+        log.info("Inicio busca de usuario por ID");
+
         Usuario usuario = repository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
@@ -146,6 +157,8 @@ public class UsuarioService {
             for (UsuarioAmigoDetalheResponse amigoDetalheResponse : amigos) {
                 if (idUsuario.equals(amigoDetalheResponse.getIdAmigo())) {
                     statusRelacionamento = amigoDetalheResponse.getStatusRelacionamento();
+
+                    log.info("Status de relacionamento encontrado: {}", statusRelacionamento);
                 }
             }
         }
@@ -169,7 +182,34 @@ public class UsuarioService {
             .build();
     }
 
+    public UsuarioResponse adicionarFoto(MultipartFile foto) {
+        log.info("Inicio adicionar foto do usuario");
+
+        try {
+            Usuario usuario = tokenService.obterUsuarioToken();
+
+            String fotoUsuario = Base64.getEncoder().encodeToString(foto.getBytes());
+            usuario.setFoto(fotoUsuario);
+
+            repository.save(usuario);
+
+            return UsuarioResponse.builder()
+                .id(usuario.getId())
+                .nome(usuario.getNome())
+                .email(usuario.getEmail())
+                .foto(fotoUsuario)
+                .build();
+        } catch (Exception exception) {
+            log.error("Erro ao adicionar foto do usuario: {}", exception.getMessage());
+
+            throw new ErroAoAdicionarFotoUsuarioException();
+        }
+
+    }
+
     private UsuarioAmigoResponse listarRelacionamentos() {
+        log.info("Inicio listagem de relacionamentos de usuario");
+
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<UsuarioAmigoDetalheResponse> usuarioAmigoDetalheResponse = usuario.getAmigos().stream()
@@ -178,9 +218,11 @@ public class UsuarioService {
                 .idAmigo(amigo.getAmigo().getId())
                 .statusRelacionamento(amigo.getStatus())
                 .build())
-            .collect(toList());
+            .toList();
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
+
+        log.info("Listagem de relacionamentos de usuario concluída com sucesso");
 
         return UsuarioAmigoResponse.builder()
             .amigos(usuarioAmigoDetalheResponse)
