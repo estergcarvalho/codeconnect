@@ -1,2 +1,2 @@
 ALTER TABLE usuario
-ADD COLUMN foto TEXT;
+    ADD COLUMN foto TEXT;

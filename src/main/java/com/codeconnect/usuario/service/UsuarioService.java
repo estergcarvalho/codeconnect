@@ -90,7 +90,7 @@ public class UsuarioService {
                 .idAmigo(amigo.getAmigo().getId())
                 .statusRelacionamento(amigo.getStatus())
                 .build())
-            .collect(toList());
+            .toList();
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
 
@@ -218,7 +218,7 @@ public class UsuarioService {
                 .idAmigo(amigo.getAmigo().getId())
                 .statusRelacionamento(amigo.getStatus())
                 .build())
-            .collect(toList());
+            .toList();
 
         int totalAmigos = usuarioAmigoDetalheResponse.size();
 
