@@ -84,9 +84,9 @@ public class PostController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<List<PostResponse>> listarPostsUsuario(@PathVariable UUID id) {
-        List<PostResponse> perfilUsuario = service.listarPostsUsuario(id);
+        List<PostResponse> usuario = service.listarPostsUsuario(id);
 
-        return ResponseEntity.ok(perfilUsuario);
+        return ResponseEntity.ok(usuario);
     }
 
 }

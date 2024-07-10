@@ -98,18 +98,18 @@ public class PostService {
             .toList();
     }
 
-    public List<PostResponse> listarPostsUsuario(UUID idUsuarioVisitado) {
-        log.info("Iniciando a listagem de posts do usuário visitado");
+    public List<PostResponse> listarPostsUsuario(UUID idUsuario) {
+        log.info("Iniciando a listagem de posts do perfil do usuario visitado");
 
         Usuario usuarioLogado = tokenService.obterUsuarioToken();
 
-        boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuarioVisitado);
+        boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuario);
 
-        Usuario usuario = usuarioRepository.findById(idUsuarioVisitado)
+        Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
         if (isUsuarioLogado || usuarioLogado.getAmigos().stream()
-            .anyMatch(amigo -> amigo.getAmigo().getId().equals(idUsuarioVisitado))) {
+            .anyMatch(amigo -> amigo.getAmigo().getId().equals(idUsuario))) {
 
             return usuario.getPosts().stream()
                 .map(post -> PostResponse.builder()
