@@ -9,6 +9,8 @@ import com.codeconnect.post.model.Post;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.model.UsuarioAmigo;
+import com.codeconnect.usuario.repository.UsuarioRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -21,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +42,9 @@ public class PostServiceTest {
 
     @Mock
     private PostRepository repository;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
 
     @Mock
     private TokenService tokenService;
@@ -65,7 +71,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.save(any(Post.class))).thenReturn(postagemSalva);
 
-        PostResponse postResponse = postService.salvar(postagemRequest);
+        PostResponse postResponse = postService.cadastrar(postagemRequest);
 
         assertNotNull(postResponse);
         assertEquals(postagemSalva.getId(), postResponse.getId());
@@ -88,7 +94,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.save(any(Post.class))).thenThrow(new ErroAoSalvarPostException());
 
-        assertThrows(ErroAoSalvarPostException.class, () -> postService.salvar(postagemRequest));
+        assertThrows(ErroAoSalvarPostException.class, () -> postService.cadastrar(postagemRequest));
     }
 
     @Test
@@ -193,6 +199,50 @@ public class PostServiceTest {
         assertEquals(nomeAmigo, segundoPost.getUsuario().getNome());
         assertEquals(descricao, segundoPost.getDescricao());
         assertEquals(dataCriacao, segundoPost.getDataCriacao());
+    }
+
+    @Test
+    @DisplayName("Deve listar postagens do usuário logado ou de um amigo do usuario")
+    public void deveListarPostagensUsuarioVisitado() {
+        UUID idUsuario = UUID.randomUUID();
+        UUID idUsuarioLogado = UUID.randomUUID();
+        String descricao = "post do usuário que esto visitando o seu perfil";
+        Timestamp dataCriacao = new Timestamp(System.currentTimeMillis());
+
+        Usuario usuario = Usuario.builder()
+            .id(idUsuario)
+            .posts(List.of(
+                Post.builder()
+                    .id(UUID.randomUUID())
+                    .dataCriacao(dataCriacao)
+                    .descricao(descricao)
+                    .build()
+            ))
+            .build();
+
+        Usuario usuarioLogado = Usuario.builder()
+            .id(idUsuarioLogado)
+            .posts(List.of(
+                Post.builder()
+                    .id(UUID.randomUUID())
+                    .dataCriacao(dataCriacao)
+                    .descricao("post do usuario logado")
+                    .build()
+            ))
+            .amigos(List.of(UsuarioAmigo.builder()
+                .amigo(usuario)
+                .build()))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
+        when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
+
+        List<PostResponse> postsUsuario = postService.listarPostsUsuarioAmigo(idUsuario);
+
+        assertNotNull(postsUsuario);
+        assertEquals(1, postsUsuario.size());
+        assertEquals(descricao, postsUsuario.getFirst().getDescricao());
+        assertEquals(dataCriacao, postsUsuario.getFirst().getDataCriacao());
     }
 
 }

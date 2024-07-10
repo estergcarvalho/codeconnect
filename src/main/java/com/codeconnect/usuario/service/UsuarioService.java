@@ -28,8 +28,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 @Slf4j
 public class UsuarioService {
@@ -106,7 +104,6 @@ public class UsuarioService {
         log.info("Inicio edição de usuario");
 
         Usuario usuario = tokenService.obterUsuarioToken();
-
         usuario.setProfissao(usuarioEditarResquest.getProfissao());
         usuario.setPais(usuarioEditarResquest.getPais());
         usuario.setEstado(usuarioEditarResquest.getEstado());
