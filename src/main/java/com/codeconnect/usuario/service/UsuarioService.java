@@ -104,7 +104,6 @@ public class UsuarioService {
         log.info("Inicio edição de usuario");
 
         Usuario usuario = tokenService.obterUsuarioToken();
-
         usuario.setProfissao(usuarioEditarResquest.getProfissao());
         usuario.setPais(usuarioEditarResquest.getPais());
         usuario.setEstado(usuarioEditarResquest.getEstado());

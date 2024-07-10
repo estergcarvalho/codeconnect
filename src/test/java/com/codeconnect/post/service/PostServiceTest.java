@@ -237,7 +237,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
         when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
 
-        List<PostResponse> postsUsuario = postService.listarPostsUsuario(idUsuario);
+        List<PostResponse> postsUsuario = postService.listarPostsUsuarioAmigo(idUsuario);
 
         assertNotNull(postsUsuario);
         assertEquals(1, postsUsuario.size());

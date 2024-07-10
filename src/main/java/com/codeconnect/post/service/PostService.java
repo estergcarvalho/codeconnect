@@ -11,6 +11,7 @@ import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.model.UsuarioAmigo;
 import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,19 +99,23 @@ public class PostService {
             .toList();
     }
 
-    public List<PostResponse> listarPostsUsuario(UUID idUsuario) {
-        log.info("Iniciando a listagem de posts do perfil do usuario visitado");
-
-        Usuario usuarioLogado = tokenService.obterUsuarioToken();
-
-        boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuario);
-
+    public List<PostResponse> listarPostsUsuarioAmigo(UUID idUsuario) {
+        log.info("Iniciando a listagem de posts do perfil do usuario e amigo");
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
-        if (isUsuarioLogado || usuarioLogado.getAmigos().stream()
-            .anyMatch(amigo -> amigo.getAmigo().getId().equals(idUsuario))) {
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+        boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuario);
+        boolean isAmigoUsuario = false;
 
+        for (UsuarioAmigo usuarioAmigo : usuarioLogado.getAmigos()) {
+            if (usuarioAmigo.getAmigo().getId().equals(idUsuario)) {
+                isAmigoUsuario = true;
+                break;
+            }
+        }
+
+        if (isUsuarioLogado || isAmigoUsuario) {
             return usuario.getPosts().stream()
                 .map(post -> PostResponse.builder()
                     .id(post.getId())
@@ -118,9 +123,9 @@ public class PostService {
                     .descricao(post.getDescricao())
                     .build())
                 .toList();
-        } else {
-            return List.of();
         }
+
+        return List.of();
     }
 
 }

@@ -45,8 +45,8 @@ public class PostController {
     }
 
     @Operation(
-        summary = "Recupera os posts do usuário",
-        description = "Recupera a lista de posts do usuário atualmente logado",
+        summary = "Lista os posts do usuário",
+        description = "lista de posts do usuário atualmente logado",
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de posts recuperada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
@@ -60,8 +60,8 @@ public class PostController {
     }
 
     @Operation(
-        summary = "Retorna os posts recentes do usuário logado",
-        description = "Retorna a lista de posts do usuário logado e de seus amigos",
+        summary = "Lista os posts recentes do usuário logado",
+        description = "Lista de posts do usuário logado e de seus amigos",
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de posts recentes recuperada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
@@ -75,16 +75,16 @@ public class PostController {
     }
 
     @Operation(
-        summary = "Retorna as posts no perfil com base no id do usuário selecionado",
-        description = "Retorna a lista de posts do usuário com base no seu id",
+        summary = "Lista os posts do perfil do usuario ou amigo com base no seu id",
+        description = "Lista os posts do usuário ou amigo com base no seu id",
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de posts recuperada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
         }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<List<PostResponse>> listarPostsUsuario(@PathVariable UUID id) {
-        List<PostResponse> usuario = service.listarPostsUsuario(id);
+    public ResponseEntity<List<PostResponse>> listarPostsUsuarioAmigo(@PathVariable UUID id) {
+        List<PostResponse> usuario = service.listarPostsUsuarioAmigo(id);
 
         return ResponseEntity.ok(usuario);
     }
