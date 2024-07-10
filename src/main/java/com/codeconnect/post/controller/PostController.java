@@ -38,7 +38,7 @@ public class PostController {
         }
     )
     @PostMapping
-    public ResponseEntity<PostResponse> salvar(@RequestBody @Valid PostRequest postRequest) {
+    public ResponseEntity<PostResponse> cadastrar(@RequestBody @Valid PostRequest postRequest) {
         PostResponse postResponse = service.cadastrar(postRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(postResponse);
