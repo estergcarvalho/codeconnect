@@ -9,13 +9,16 @@ import com.codeconnect.post.exception.ErroAoSalvarPostException;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
+import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -26,6 +29,9 @@ public class PostService {
 
     @Autowired
     private PostRepository repository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public PostResponse salvar(PostRequest postRequest) {
         log.info("Iniciando salvamento da postagem");
@@ -90,6 +96,31 @@ public class PostService {
                     .build())
                 .build())
             .toList();
+    }
+
+    public List<PostResponse> listarPostsUsuario(UUID idUsuarioVisitado) {
+        log.info("Iniciando a listagem de posts do usuário visitado");
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        boolean isUsuarioLogado = usuarioLogado.getId().equals(idUsuarioVisitado);
+
+        Usuario usuario = usuarioRepository.findById(idUsuarioVisitado)
+            .orElseThrow(UsuarioNaoEncontradoException::new);
+
+        if (isUsuarioLogado || usuarioLogado.getAmigos().stream()
+            .anyMatch(amigo -> amigo.getAmigo().getId().equals(idUsuarioVisitado))) {
+
+            return usuario.getPosts().stream()
+                .map(post -> PostResponse.builder()
+                    .id(post.getId())
+                    .dataCriacao(post.getDataCriacao())
+                    .descricao(post.getDescricao())
+                    .build())
+                .toList();
+        } else {
+            return List.of();
+        }
     }
 
 }

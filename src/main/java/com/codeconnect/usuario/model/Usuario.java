@@ -55,4 +55,5 @@ public class Usuario {
     private List<RedeSocial> redesSociais;
 
     private String foto;
+
 }

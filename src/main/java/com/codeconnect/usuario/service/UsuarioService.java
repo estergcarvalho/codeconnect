@@ -28,8 +28,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 @Slf4j
 public class UsuarioService {

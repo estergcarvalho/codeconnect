@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/posts")
@@ -58,8 +60,8 @@ public class PostController {
     }
 
     @Operation(
-        summary = "Recupera os posts recentes do usuário logado",
-        description = "Recupera a lista de posts do usuário logado e de seus amigos",
+        summary = "Retorna os posts recentes do usuário logado",
+        description = "Retorna a lista de posts do usuário logado e de seus amigos",
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de posts recentes recuperada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
@@ -70,6 +72,21 @@ public class PostController {
         List<PostRecenteDetalheResponse> postagensRecentes = service.recentes();
 
         return ResponseEntity.ok(postagensRecentes);
+    }
+
+    @Operation(
+        summary = "Retorna as posts no perfil com base no id do usuário selecionado",
+        description = "Retorna a lista de posts do usuário com base no seu id",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de posts recuperada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+        }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<List<PostResponse>> listarPostsUsuario(@PathVariable UUID id) {
+        List<PostResponse> perfilUsuario = service.listarPostsUsuario(id);
+
+        return ResponseEntity.ok(perfilUsuario);
     }
 
 }
