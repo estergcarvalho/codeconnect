@@ -71,7 +71,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.save(any(Post.class))).thenReturn(postagemSalva);
 
-        PostResponse postResponse = postService.salvar(postagemRequest);
+        PostResponse postResponse = postService.cadastrar(postagemRequest);
 
         assertNotNull(postResponse);
         assertEquals(postagemSalva.getId(), postResponse.getId());
@@ -94,7 +94,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.save(any(Post.class))).thenThrow(new ErroAoSalvarPostException());
 
-        assertThrows(ErroAoSalvarPostException.class, () -> postService.salvar(postagemRequest));
+        assertThrows(ErroAoSalvarPostException.class, () -> postService.cadastrar(postagemRequest));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Deve listar postagens do usuário visitado")
+    @DisplayName("Deve listar postagens do usuário logado ou de um amigo do usuario")
     public void deveListarPostagensUsuarioVisitado() {
         UUID idUsuario = UUID.randomUUID();
         UUID idUsuarioLogado = UUID.randomUUID();

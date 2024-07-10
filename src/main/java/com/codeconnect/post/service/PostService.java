@@ -34,8 +34,8 @@ public class PostService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public PostResponse salvar(PostRequest postRequest) {
-        log.info("Iniciando salvamento da postagem");
+    public PostResponse cadastrar(PostRequest postRequest) {
+        log.info("Iniciando cadastro da postagem");
 
         try {
             Usuario usuario = tokenService.obterUsuarioToken();
@@ -79,7 +79,7 @@ public class PostService {
     }
 
     public List<PostRecenteDetalheResponse> recentes() {
-        log.info("Iniciando a lista de post do usuário");
+        log.info("Iniciando a lista de post recentes do usuario");
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
@@ -101,7 +101,7 @@ public class PostService {
 
     public List<PostResponse> listarPostsUsuarioAmigo(UUID idUsuario) {
         log.info("Iniciando a listagem de posts do perfil do usuario e amigo");
-        
+
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 

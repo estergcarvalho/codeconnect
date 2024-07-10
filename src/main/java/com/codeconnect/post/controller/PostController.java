@@ -30,8 +30,8 @@ public class PostController {
     private PostService service;
 
     @Operation(
-        summary = "Cria uma nova postagem",
-        description = "Cria uma nova postagem para o usuário atualmente logado com base nos dados fornecidos",
+        summary = "Cadastrar uma nova postagem",
+        description = "Cadastrar uma nova postagem para o usuário atualmente logado com base nos dados fornecidos",
         responses = {
             @ApiResponse(responseCode = "201", description = "Postagema criada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
@@ -39,7 +39,7 @@ public class PostController {
     )
     @PostMapping
     public ResponseEntity<PostResponse> salvar(@RequestBody @Valid PostRequest postRequest) {
-        PostResponse postResponse = service.salvar(postRequest);
+        PostResponse postResponse = service.cadastrar(postRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(postResponse);
     }
