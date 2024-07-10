@@ -101,6 +101,7 @@ public class PostService {
 
     public List<PostResponse> listarPostsUsuarioAmigo(UUID idUsuario) {
         log.info("Iniciando a listagem de posts do perfil do usuario e amigo");
+        
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(UsuarioNaoEncontradoException::new);
 
