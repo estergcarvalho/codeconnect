@@ -221,6 +221,7 @@ public class UsuarioServiceTest {
             .amigo(Usuario.builder()
                 .id(ID_USUARIO_AMIGO)
                 .nome("Ester")
+                .email("ester@teste.com")
                 .redesSociais(Collections.singletonList(
                     RedeSocial.builder()
                         .nome(REDES_SOCIAIS)
@@ -238,6 +239,7 @@ public class UsuarioServiceTest {
         Usuario usuarioAmigo = Usuario.builder()
             .id(ID_USUARIO_AMIGO)
             .nome("Ester")
+            .email("ester@teste.com")
             .profissao(PROFISSAO)
             .pais(PAIS)
             .estado(ESTADO)
@@ -256,6 +258,7 @@ public class UsuarioServiceTest {
 
         assertEquals(ID_USUARIO_AMIGO, usuarioPerfilResponse.getId());
         assertEquals("Ester", usuarioPerfilResponse.getNome());
+        assertEquals("ester@teste.com", usuarioPerfilResponse.getEmail());
         assertEquals(PROFISSAO, usuarioPerfilResponse.getProfissao());
         assertEquals(ESTADO, usuarioPerfilResponse.getEstado());
         assertEquals(PAIS, usuarioPerfilResponse.getPais());
@@ -290,6 +293,7 @@ public class UsuarioServiceTest {
         Usuario usuarioPendente = Usuario.builder()
             .id(ID_USUARIO_PENDENTE)
             .nome("Maria")
+            .email("maria@teste.com")
             .profissao(PROFISSAO)
             .pais(PAIS)
             .estado(ESTADO)
@@ -308,6 +312,7 @@ public class UsuarioServiceTest {
 
         assertEquals(ID_USUARIO_PENDENTE, usuarioPerfilResponse.getId());
         assertEquals("Maria", usuarioPerfilResponse.getNome());
+        assertEquals("maria@teste.com", usuarioPerfilResponse.getEmail());
         assertEquals(PROFISSAO, usuarioPerfilResponse.getProfissao());
         assertEquals(ESTADO, usuarioPerfilResponse.getEstado());
         assertEquals(PAIS, usuarioPerfilResponse.getPais());
@@ -345,6 +350,7 @@ public class UsuarioServiceTest {
         assertNull(usuarioPerfilResponse.getStatusRelacionamento());
         assertEquals(usuarioLogado.getId(), usuarioPerfilResponse.getId());
         assertEquals(usuarioLogado.getNome(), usuarioPerfilResponse.getNome());
+        assertEquals(usuarioLogado.getEmail(), usuarioPerfilResponse.getEmail());
         assertEquals(1, usuarioPerfilResponse.getRedesSociais().size());
         assertEquals(REDES_SOCIAIS, usuarioPerfilResponse.getRedesSociais().getFirst().getNome());
         assertEquals(LINK, usuarioPerfilResponse.getRedesSociais().getFirst().getLink());

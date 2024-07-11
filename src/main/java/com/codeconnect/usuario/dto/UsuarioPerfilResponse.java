@@ -26,6 +26,9 @@ public class UsuarioPerfilResponse {
     @Schema(description = "Nome usuário", example = "Joao")
     private String nome;
 
+    @Schema(description = "Email usuário", example = "Joao@teste.com")
+    private String email;
+
     @Schema(description = "Profissão do usuário", example = "Engenheiro de Software")
     private String profissao;
 
