@@ -51,7 +51,7 @@ public class SecurityConfig {
             .sessionManagement(configuracaoSessao -> configuracaoSessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException)
-                -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                -> response.sendError(response.getStatus()))
             )
             .build();
 

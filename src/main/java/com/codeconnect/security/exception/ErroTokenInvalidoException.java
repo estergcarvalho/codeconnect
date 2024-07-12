@@ -8,7 +8,7 @@ public class ErroTokenInvalidoException extends CodeConnectException {
 
     @Override
     public ProblemDetail handleProblemDetail() {
-        ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 
         detalheProblema.setTitle("Token invalido");
 
