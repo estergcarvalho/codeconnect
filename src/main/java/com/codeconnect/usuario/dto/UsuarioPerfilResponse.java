@@ -23,10 +23,10 @@ public class UsuarioPerfilResponse {
     @Schema(description = "Id usuário", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
     private UUID id;
 
-    @Schema(description = "Nome usuário", example = "Joao")
+    @Schema(description = "Nome do usuário", example = "Joao")
     private String nome;
 
-    @Schema(description = "Email usuário", example = "Joao@teste.com")
+    @Schema(description = "Email usuário", example = "joao@teste.com")
     private String email;
 
     @Schema(description = "Profissão do usuário", example = "Engenheiro de Software")
@@ -38,7 +38,7 @@ public class UsuarioPerfilResponse {
     @Schema(description = "Estado do usuário", example = "São Paulo")
     private String estado;
 
-    @Schema(description = "Retornar usuario logado")
+    @Schema(description = "Retornar usuário logado")
     @JsonProperty("usuario_logado")
     private boolean usuarioLogado;
 
