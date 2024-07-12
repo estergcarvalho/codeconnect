@@ -23,7 +23,7 @@ public class UsuarioPerfilResponse {
     @Schema(description = "Id usuário", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
     private UUID id;
 
-    @Schema(description = "Nome do usuário", example = "Joao")
+    @Schema(description = "Nome do usuário", example = "João")
     private String nome;
 
     @Schema(description = "Email usuário", example = "joao@teste.com")
