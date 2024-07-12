@@ -170,6 +170,7 @@ public class UsuarioService {
         return UsuarioPerfilResponse.builder()
             .id(usuario.getId())
             .nome(usuario.getNome())
+            .email(usuario.getEmail())
             .profissao(usuario.getProfissao())
             .estado(usuario.getEstado())
             .pais(usuario.getPais())
