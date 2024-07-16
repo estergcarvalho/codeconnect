@@ -68,7 +68,7 @@ public class TokenService {
                 .verify(token)
                 .getSubject();
         } catch (Exception exception) {
-            log.error("Erro ao obter o assunto do token");
+            log.error("Erro ao obter token");
 
             throw new ErroTokenInvalidoException();
         }
@@ -76,9 +76,9 @@ public class TokenService {
 
     public Usuario obterUsuarioToken() {
         Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
-        String usuario = autenticacao.getName();
+        String usuarioEmail = autenticacao.getName();
 
-        return usuarioRepository.findByEmail(usuario)
+        return usuarioRepository.findByEmail(usuarioEmail)
             .orElseThrow(UsuarioNaoEncontradoException::new);
     }
 
