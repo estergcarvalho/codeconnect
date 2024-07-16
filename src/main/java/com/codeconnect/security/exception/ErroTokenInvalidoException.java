@@ -14,4 +14,5 @@ public class ErroTokenInvalidoException extends CodeConnectException {
 
         return detalheProblema;
     }
+
 }
