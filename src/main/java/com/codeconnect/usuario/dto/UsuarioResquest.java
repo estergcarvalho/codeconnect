@@ -21,7 +21,7 @@ public class UsuarioResquest {
     @NotBlank(message = "Senha do usuário não deve ser nula ou vazia")
     private String senha;
 
-    @Schema(description = "Foto do usuário", example = "foto.png")
-    private String foto;
+    @Schema(description = "Imagem do usuário", example = "imagem.jpg")
+    private String imagem;
 
 }

@@ -11,8 +11,9 @@ import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
-import com.codeconnect.usuario.exception.ErroAoAdicionarFotoUsuarioException;
+import com.codeconnect.usuario.exception.ErroAoAdicionarImagemUsuarioException;
 import com.codeconnect.usuario.exception.ErroAoCadastrarUsuarioException;
+import com.codeconnect.usuario.exception.ErroFormatoImagemUsuarioNaoAceitoException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -180,27 +182,37 @@ public class UsuarioService {
             .build();
     }
 
-    public UsuarioResponse adicionarFoto(MultipartFile foto) {
-        log.info("Inicio adicionar foto do usuario");
+    public UsuarioResponse adicionarImagem(MultipartFile imagem) {
+        log.info("Inicio adicionar imagem do usuario");
 
         try {
+            String formatoImagem = imagem.getContentType();
+            List<String> formatosAceitos = Arrays.asList("image/jpg", "image/jpeg", "image/png", "image/gif");
+
+            if (!formatosAceitos.contains(formatoImagem)) {
+                throw new ErroFormatoImagemUsuarioNaoAceitoException();
+            }
+
             Usuario usuario = tokenService.obterUsuarioToken();
 
-            String fotoUsuario = Base64.getEncoder().encodeToString(foto.getBytes());
-            usuario.setFoto(fotoUsuario);
-
+            String imagemUsuario = Base64.getEncoder().encodeToString(imagem.getBytes());
+            usuario.setImagem(imagemUsuario);
             repository.save(usuario);
 
             return UsuarioResponse.builder()
                 .id(usuario.getId())
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
-                .foto(fotoUsuario)
+                .imagem(imagemUsuario)
                 .build();
-        } catch (Exception exception) {
-            log.error("Erro ao adicionar foto do usuario: {}", exception.getMessage());
+        } catch (ErroFormatoImagemUsuarioNaoAceitoException exception) {
+            log.error("Erro formato de imagem não aceito: {}", exception.getMessage());
 
-            throw new ErroAoAdicionarFotoUsuarioException();
+            throw new ErroFormatoImagemUsuarioNaoAceitoException();
+        } catch (Exception exception) {
+            log.error("Erro ao adicionar imagem do usuario: {}", exception.getMessage());
+
+            throw new ErroAoAdicionarImagemUsuarioException();
         }
 
     }
@@ -227,5 +239,6 @@ public class UsuarioService {
             .total(totalAmigos)
             .build();
     }
+
 
 }
