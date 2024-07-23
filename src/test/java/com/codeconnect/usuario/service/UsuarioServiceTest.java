@@ -10,6 +10,7 @@ import com.codeconnect.usuario.dto.UsuarioPerfilResponse;
 import com.codeconnect.usuario.dto.UsuarioResponse;
 import com.codeconnect.usuario.dto.UsuarioResquest;
 import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
+import com.codeconnect.usuario.exception.ErroFormatoImagemUsuarioNaoAceitoException;
 import com.codeconnect.usuario.exception.UsuarioJaExistenteException;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
@@ -27,7 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -367,34 +367,58 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve adiconar foto do usuário")
-    public void deveAdicionarFotoUsuario() throws IOException {
-        byte[] fotoBytes = "ana.png".getBytes();
+    @DisplayName("Deve adicionar imagem do usuário com formato aceito")
+    public void deveAdicionarImagemUsuario() {
+        byte[] imagemBytes = "ana".getBytes();
+        String tipoImagem = "image/jpeg";
 
-        String fotoBase64 = Base64.getEncoder().encodeToString(fotoBytes);
+        MultipartFile imagem = new MockMultipartFile(
+            "file",
+            "ana.jpg",
+            tipoImagem,
+            imagemBytes
+        );
 
-        MultipartFile fotoUsuario = new MockMultipartFile(
-            "ana",
-            "ana.png",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            fotoBytes);
+        String imagemBase64 = Base64.getEncoder().encodeToString(imagemBytes);
 
         Usuario usuario = Usuario.builder()
             .id(ID_USUARIO)
             .nome(NOME_USUARIO)
             .email(EMAIL_USUARIO)
-            .foto(fotoBase64)
+            .imagem(imagemBase64)
             .build();
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
-        when(usuarioRepository.save(any())).thenReturn(usuario);
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
-        UsuarioResponse usuarioResponse = usuarioService.adicionarFoto(fotoUsuario);
+        UsuarioResponse usuarioResponse = usuarioService.adicionarImagem(imagem);
 
         assertEquals(usuario.getId(), usuarioResponse.getId());
         assertEquals(usuario.getNome(), usuarioResponse.getNome());
         assertEquals(usuario.getEmail(), usuarioResponse.getEmail());
-        assertEquals(usuario.getFoto(), usuarioResponse.getFoto());
+        assertEquals(usuario.getImagem(), usuarioResponse.getImagem());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção para formato de imagem não aceito")
+    public void deveLancarExcecaoParaFormatoImagemNaoAceito() {
+        byte[] imagemBytes = "ana.svg".getBytes();
+
+        MultipartFile imagem = new MockMultipartFile(
+            "ana",
+            "ana.svg",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            imagemBytes);
+
+        Usuario usuario = Usuario.builder()
+            .id(ID_USUARIO)
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+
+        assertThrows(ErroFormatoImagemUsuarioNaoAceitoException.class, () -> {
+            usuarioService.adicionarImagem(imagem);
+        });
     }
 
 }

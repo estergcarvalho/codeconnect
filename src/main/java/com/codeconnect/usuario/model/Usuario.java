@@ -54,6 +54,6 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RedeSocial> redesSociais;
 
-    private String foto;
+    private String imagem;
 
 }

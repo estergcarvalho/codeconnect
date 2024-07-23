@@ -100,14 +100,14 @@ public class UsuarioController {
         summary = "Adicionar foto do usuário logado",
         description = "Adicionar foto com base no usuário logado",
         responses = {
-            @ApiResponse(responseCode = "200" , description = "Foto foi Adicionada com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Foto foi Adicionada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro na requisição, foto inválida"),
-            @ApiResponse(responseCode = "500",description = "Erro interno servidor" )
+            @ApiResponse(responseCode = "500", description = "Erro interno servidor")
         }
     )
-    @PostMapping(value = "/adicionarFoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UsuarioResponse> adicionarFoto(@RequestParam(value = "foto") MultipartFile foto) {
-        UsuarioResponse usuario = service.adicionarFoto(foto);
+    @PostMapping(value = "/adicionarImagem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UsuarioResponse> adicionarImagem(@RequestParam(value = "imagem") MultipartFile imagem) {
+        UsuarioResponse usuario = service.adicionarImagem(imagem);
 
         return ResponseEntity.ok(usuario);
     }

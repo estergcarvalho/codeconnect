@@ -19,7 +19,7 @@ public class UsuarioResponse {
     @Schema(description = "Email usuário", example = "joao@teste.com")
     private String email;
 
-    @Schema(description = "Foto do usuário", example = "foto.png")
-    private String foto;
+    @Schema(description = "Imagem do usuário", example = "iVBORw0KGgoAAAANSUhEUgAAAlgAAAGECAMAAADd...")
+    private String imagem;
 
 }
