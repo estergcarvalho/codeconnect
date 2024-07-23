@@ -23,4 +23,7 @@ public class PostRecenteDetalheUsuarioResponse {
     @Schema(description = "Profissão do usuário", example = "Engenheiro de Software")
     private String profissao;
 
+    @Schema(description = "Imagem do perfil do usuário", example = "iVBORw0KGgoAAAANSUhEUgAAAlgAAAGECAMAAADd...")
+    private String imagem;
+
 }

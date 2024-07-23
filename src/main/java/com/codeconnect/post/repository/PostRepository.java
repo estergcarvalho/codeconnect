@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
 
-    @Query(value = "SELECT DISTINCT(p.id), u.id AS idUsuario, u.nome usuarioNome,u.profissao AS profissao, p.descricao, p.data_criacao AS dataCriacao " +
+    @Query(value = "SELECT DISTINCT(p.id), u.id AS idUsuario, u.nome usuarioNome, u.profissao AS profissao, p.descricao, p.data_criacao AS dataCriacao, u.imagem AS imagem  " +
         "FROM post p " +
         "LEFT JOIN usuario_amigo ua ON ua.id_usuario = p.id_usuario " +
         "INNER JOIN usuario u ON p.id_usuario = u.id " +
