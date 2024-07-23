@@ -26,6 +26,9 @@ public class PostRecenteDetalheResponse {
     @Schema(description = "Descrição da postagem usuário", example = "Bom dia rede, hoje quero compartilhar meu novo projeto.")
     private String descricao;
 
+    @Schema(description = "Imagem do perfil do usuário", example = "iVBORw0KGgoAAAANSUhEUgAAAlgAAAGECAMAAADd...")
+    private String imagem;
+
     @Schema(description = "Detalhes do usuário que fez a postagem")
     private PostRecenteDetalheUsuarioResponse usuario;
 

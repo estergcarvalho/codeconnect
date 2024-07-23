@@ -90,6 +90,7 @@ public class PostService {
                 .id(post.getId())
                 .dataCriacao(post.getDataCriacao())
                 .descricao(post.getDescricao())
+                .imagem(post.getImagem())
                 .usuario(PostRecenteDetalheUsuarioResponse.builder()
                     .id(post.getIdUsuario())
                     .nome(post.getUsuarioNome())
