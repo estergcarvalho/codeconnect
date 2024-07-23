@@ -51,4 +51,7 @@ public class UsuarioPerfilResponse {
     @JsonProperty("redes_sociais")
     private List<RedeSocialResponse> redesSociais;
 
+    @Schema(description = "Imagem do perfil usuário")
+    private String imagem;
+
 }

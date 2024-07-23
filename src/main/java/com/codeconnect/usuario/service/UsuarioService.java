@@ -179,6 +179,7 @@ public class UsuarioService {
             .usuarioLogado(isUsuarioLogado)
             .statusRelacionamento(statusRelacionamento)
             .redesSociais(redeSocialResponses)
+            .imagem(usuario.getImagem())
             .build();
     }
 
@@ -239,6 +240,5 @@ public class UsuarioService {
             .total(totalAmigos)
             .build();
     }
-
 
 }
