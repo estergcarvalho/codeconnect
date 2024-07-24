@@ -32,7 +32,7 @@ public class PostResponse {
     @Schema(description = "Descrição da postagem usuário", example = "Bom dia rede, hoje quero compartilhar meu novo projeto.")
     private String descricao;
 
-    @Schema(description = "Imagem do perfil do usuário")
+    @Schema(description = "Imagem do perfil do usuário", example = "R0lGODlhkAGQAfcAAAIAAQwBAQwECBMDAxoFAxwLBBwLDBY...")
     private String imagem;
 
 }
