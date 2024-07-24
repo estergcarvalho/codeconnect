@@ -111,15 +111,15 @@ public class PostServiceTest {
             .build();
 
         Post postagemUm = Post.builder()
-            .id(usuarioId)
-            .usuario(Usuario.builder().id(usuarioId).build())
+            .id(UUID.randomUUID())
+            .usuario(usuario)
             .dataCriacao(dataCriacao)
             .descricao("Boa tarde, lendo um livro super legal 'Por trás de uma lógica', super indico")
             .build();
 
         Post postagemDois = Post.builder()
             .id(UUID.randomUUID())
-            .usuario(Usuario.builder().id(usuarioId).build())
+            .usuario(usuario)
             .dataCriacao(dataCriacao)
             .descricao("Bom dia rede, hoje quero compartilhar meu novo projeto Java, está bem legal")
             .build();
@@ -129,6 +129,7 @@ public class PostServiceTest {
         usuario.getPosts().addAll(postagens);
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(repository.findAllByUsuarioId(usuario.getId())).thenReturn(postagens);
 
         List<PostResponse> listaPostagens = postService.listar();
 
