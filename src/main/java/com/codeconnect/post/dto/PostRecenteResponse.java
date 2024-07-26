@@ -35,4 +35,8 @@ public interface PostRecenteResponse {
     @Column(name = "profissao")
     String getProfissao();
 
+    @Schema(description = "Imagem perfil do usuário", example = "iVBORw0KGgoAAAANSUhEUgAAAlgAAAGECAMAAADd...")
+    @Column(name = "imagem")
+    String getImagem();
+
 }

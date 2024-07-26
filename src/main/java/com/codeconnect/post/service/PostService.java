@@ -52,8 +52,11 @@ public class PostService {
 
             return PostResponse.builder()
                 .id(salvarPost.getId())
+                .nome(usuario.getNome())
+                .profissao(usuario.getProfissao())
                 .dataCriacao(salvarPost.getDataCriacao())
                 .descricao(salvarPost.getDescricao())
+                .imagem(usuario.getImagem())
                 .build();
         } catch (Exception exception) {
             log.error("Erro ao salvar postagem", exception);
@@ -94,6 +97,7 @@ public class PostService {
                     .id(post.getIdUsuario())
                     .nome(post.getUsuarioNome())
                     .profissao(post.getProfissao())
+                    .imagem(post.getImagem())
                     .build())
                 .build())
             .toList();
