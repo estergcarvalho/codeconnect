@@ -56,4 +56,6 @@ public class Usuario {
 
     private String imagem;
 
+    private String tipoImagem;
+
 }

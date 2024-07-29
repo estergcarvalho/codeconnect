@@ -198,6 +198,7 @@ public class UsuarioService {
 
             String imagemUsuario = Base64.getEncoder().encodeToString(imagem.getBytes());
             usuario.setImagem(imagemUsuario);
+            usuario.setTipoImagem(formatoImagem);
             repository.save(usuario);
 
             return UsuarioResponse.builder()
@@ -205,6 +206,7 @@ public class UsuarioService {
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
                 .imagem(imagemUsuario)
+                .tipoImagem(formatoImagem)
                 .build();
         } catch (ErroFormatoImagemUsuarioNaoAceitoException exception) {
             log.error("Erro formato de imagem não aceito: {}", exception.getMessage());

@@ -1,0 +1,2 @@
+ALTER TABLE usuario
+    ADD COLUMN IF NOT EXISTS tipo_imagem VARCHAR(20);
