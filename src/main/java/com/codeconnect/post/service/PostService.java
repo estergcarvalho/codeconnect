@@ -126,8 +126,11 @@ public class PostService {
             return usuario.getPosts().stream()
                 .map(post -> PostResponse.builder()
                     .id(post.getId())
+                    .nome(usuario.getNome())
                     .dataCriacao(post.getDataCriacao())
                     .descricao(post.getDescricao())
+                    .imagem(usuario.getImagem())
+                    .tipoImagem(usuario.getTipoImagem())
                     .build())
                 .toList();
         }
