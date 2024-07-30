@@ -98,6 +98,7 @@ public class PostService {
                     .nome(post.getUsuarioNome())
                     .profissao(post.getProfissao())
                     .imagem(post.getImagem())
+                    .tipoImagem(post.getTipoImagem())
                     .build())
                 .build())
             .toList();

@@ -1,5 +1,6 @@
 package com.codeconnect.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,9 @@ public class PostRecenteDetalheUsuarioResponse {
 
     @Schema(description = "Imagem do perfil do usuário", example = "iVBORw0KGgoAAAANSUhEUgAAAlgAAAGECAMAAADd...")
     private String imagem;
+
+    @Schema(description = "Tipo de imagem do perfil do usuário", example = "imagem/png")
+    @JsonProperty("tipo_imagem")
+    private String tipoImagem;
 
 }

@@ -180,6 +180,7 @@ public class UsuarioService {
             .statusRelacionamento(statusRelacionamento)
             .redesSociais(redeSocialResponses)
             .imagem(usuario.getImagem())
+            .tipoImagem(usuario.getTipoImagem())
             .build();
     }
 
