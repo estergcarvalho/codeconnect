@@ -57,6 +57,7 @@ public class PostService {
                 .dataCriacao(salvarPost.getDataCriacao())
                 .descricao(salvarPost.getDescricao())
                 .imagem(usuario.getImagem())
+                .tipoImagem(usuario.getTipoImagem())
                 .build();
         } catch (Exception exception) {
             log.error("Erro ao salvar postagem", exception);
