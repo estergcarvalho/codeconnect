@@ -74,6 +74,7 @@ public class UsuarioServiceTest {
     private static final String ESTADO = "São Paulo";
     private static final String REDES_SOCIAIS = "GitHub";
     private static final String LINK = "https://github.com/joao";
+    private static final String TIPO_IMAGEM = "image/png";
 
     @Test
     @DisplayName("Deve cadastrar usuário")
@@ -419,6 +420,34 @@ public class UsuarioServiceTest {
         assertThrows(ErroFormatoImagemUsuarioNaoAceitoException.class, () -> {
             usuarioService.adicionarImagem(imagem);
         });
+    }
+
+    @Test
+    @DisplayName("Deve retornar dados do perfil do usuário logado")
+    public void deveRetornarDadosDoUsuarioLogado() {
+        byte[] imagemBytes = "ana.svg".getBytes();
+
+        MultipartFile imagem = new MockMultipartFile(
+            "ana",
+            "ana.svg",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            imagemBytes);
+
+        Usuario usuario = Usuario.builder()
+            .id(ID_USUARIO)
+            .nome(NOME_USUARIO)
+            .imagem(imagem.getContentType())
+            .tipoImagem(TIPO_IMAGEM)
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+
+        UsuarioPerfilResponse usuarioPerfilResponse = usuarioService.perfil();
+
+        assertEquals(usuario.getId(), usuarioPerfilResponse.getId());
+        assertEquals(usuario.getNome(), usuarioPerfilResponse.getNome());
+        assertEquals(usuario.getImagem(), usuarioPerfilResponse.getImagem());
+        assertEquals(usuario.getTipoImagem(), usuarioPerfilResponse.getTipoImagem());
     }
 
 }

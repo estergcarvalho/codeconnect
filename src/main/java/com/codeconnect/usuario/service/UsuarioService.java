@@ -218,7 +218,17 @@ public class UsuarioService {
 
             throw new ErroAoAdicionarImagemUsuarioException();
         }
+    }
 
+    public UsuarioPerfilResponse perfil() {
+        Usuario usuario = tokenService.obterUsuarioToken();
+
+        return UsuarioPerfilResponse.builder()
+            .id(usuario.getId())
+            .nome(usuario.getNome())
+            .imagem(usuario.getImagem())
+            .tipoImagem(usuario.getTipoImagem())
+            .build();
     }
 
     private UsuarioAmigoResponse listarRelacionamentos() {

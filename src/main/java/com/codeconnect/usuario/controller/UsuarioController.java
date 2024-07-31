@@ -112,4 +112,20 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
+    @Operation (
+        summary = "Retorna perfil do usuário logado",
+        description = "Retorna informações do perfil do usuário atualmente autenticado",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Perfil do usuário retornado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro no servidor"),
+        }
+    )
+    @GetMapping("/perfil")
+    public ResponseEntity<UsuarioPerfilResponse> perfil() {
+        UsuarioPerfilResponse usuario = service.perfil();
+
+        return ResponseEntity.ok(usuario);
+    }
+
 }
