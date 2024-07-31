@@ -113,11 +113,11 @@ public class UsuarioController {
     }
 
     @Operation (
-        summary = "Obter perfil do usuário logado",
+        summary = "Retorna perfil do usuário logado",
         description = "Retorna informações do perfil do usuário atualmente autenticado",
         responses = {
             @ApiResponse(responseCode = "200", description = "Perfil do usuário retornado com sucesso"),
-            @ApiResponse(responseCode = "401", description = "Usuário não autoriazado"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro no servidor"),
         }
     )
