@@ -54,4 +54,8 @@ public class UsuarioPerfilResponse {
     @Schema(description = "Imagem do perfil usuário")
     private String imagem;
 
+    @Schema(description = "Tipo de imagem do perfil do usuário", example = "imagem/png")
+    @JsonProperty("tipo_imagem")
+    private String tipoImagem;
+
 }

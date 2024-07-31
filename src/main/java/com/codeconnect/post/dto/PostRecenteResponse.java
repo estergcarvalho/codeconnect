@@ -39,4 +39,8 @@ public interface PostRecenteResponse {
     @Column(name = "imagem")
     String getImagem();
 
+    @Schema(description = "Tipo de imagem do perfil do usuário", example = "imagem/png")
+    @JsonProperty("tipo_imagem")
+    @Column(name = "tipo_imagem")
+    String getTipoImagem();
 }

@@ -35,4 +35,8 @@ public class PostResponse {
     @Schema(description = "Imagem do perfil do usuário", example = "R0lGODlhkAGQAfcAAAIAAQwBAQwECBMDAxoFAxwLBBwLDBY...")
     private String imagem;
 
+    @Schema(description = "Tipo de imagem do perfil do usuário", example = "imagem/png")
+    @JsonProperty("tipo_imagem")
+    private String tipoImagem;
+    
 }

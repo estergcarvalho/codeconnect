@@ -57,6 +57,7 @@ public class PostService {
                 .dataCriacao(salvarPost.getDataCriacao())
                 .descricao(salvarPost.getDescricao())
                 .imagem(usuario.getImagem())
+                .tipoImagem(usuario.getTipoImagem())
                 .build();
         } catch (Exception exception) {
             log.error("Erro ao salvar postagem", exception);
@@ -98,6 +99,7 @@ public class PostService {
                     .nome(post.getUsuarioNome())
                     .profissao(post.getProfissao())
                     .imagem(post.getImagem())
+                    .tipoImagem(post.getTipoImagem())
                     .build())
                 .build())
             .toList();
@@ -124,8 +126,11 @@ public class PostService {
             return usuario.getPosts().stream()
                 .map(post -> PostResponse.builder()
                     .id(post.getId())
+                    .nome(usuario.getNome())
                     .dataCriacao(post.getDataCriacao())
                     .descricao(post.getDescricao())
+                    .imagem(usuario.getImagem())
+                    .tipoImagem(usuario.getTipoImagem())
                     .build())
                 .toList();
         }
