@@ -1,7 +1,6 @@
 package com.codeconnect.post.model;
 
 import com.codeconnect.usuario.model.Usuario;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @Table(
     uniqueConstraints = { @UniqueConstraint(columnNames = {"id_post", "id_usuario"}) }
 )
-public class Curtida {
+public class PostCurtida {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

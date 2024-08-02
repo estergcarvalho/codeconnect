@@ -40,6 +40,6 @@ public class Post {
     private String descricao;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Curtida> curtidas;
+    private List<PostCurtida> curtidas;
 
 }
