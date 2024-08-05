@@ -10,7 +10,7 @@ public class UsuarioNaoAutorizadoParaRemoverCurtidaException extends CodeConnect
     public ProblemDetail handleProblemDetail() {
         ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 
-        detalheProblema.setTitle("Usuário não tem permissão para remover a curtida da postagem");
+        detalheProblema.setTitle("Usuário não tem permissão para remover a curtida do post");
 
         return detalheProblema;
     }
