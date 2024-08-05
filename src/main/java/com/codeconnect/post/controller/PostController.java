@@ -33,7 +33,7 @@ public class PostController {
         summary = "Cadastrar uma nova postagem",
         description = "Cadastrar uma nova postagem para o usuário atualmente logado com base nos dados fornecidos",
         responses = {
-            @ApiResponse(responseCode = "201", description = "Postagema criada com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Postagem criada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
         }
     )
