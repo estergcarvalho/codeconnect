@@ -30,8 +30,7 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
               OR ua.id_amigo = :usuarioId
               OR p.id_usuario = :usuarioId
             ORDER BY p.data_criacao DESC;
-        """,
-        nativeQuery = true)
+        """, nativeQuery = true)
     List<PostRecenteResponse> recentes(UUID usuarioId);
 
     List<Post> findAllByUsuarioId(UUID usuarioId);
