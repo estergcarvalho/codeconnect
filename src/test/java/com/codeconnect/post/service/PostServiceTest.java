@@ -1,13 +1,21 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.post.dto.PostCurtidaResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
 import com.codeconnect.post.exception.ErroAoSalvarPostException;
+import com.codeconnect.post.exception.PostCurtidaNaoEncontradaException;
+import com.codeconnect.post.exception.PostNaoEncontradoException;
+import com.codeconnect.post.exception.UsuarioNaoAutorizadoParaCurtirException;
 import com.codeconnect.post.model.Post;
+import com.codeconnect.post.model.PostCurtida;
+import com.codeconnect.post.repository.PostCurtidaRepository;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
+import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.model.UsuarioAmigo;
 import com.codeconnect.usuario.repository.UsuarioRepository;
@@ -22,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -38,13 +49,16 @@ import static org.mockito.Mockito.when;
 public class PostServiceTest {
 
     @InjectMocks
-    private PostService postService;
+    private PostService service;
 
     @Mock
     private PostRepository repository;
 
     @Mock
     private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private PostCurtidaRepository postCurtidaRepository;
 
     @Mock
     private TokenService tokenService;
@@ -71,7 +85,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.save(any(Post.class))).thenReturn(postagemSalva);
 
-        PostResponse postResponse = postService.cadastrar(postagemRequest);
+        PostResponse postResponse = service.cadastrar(postagemRequest);
 
         assertNotNull(postResponse);
         assertEquals(postagemSalva.getId(), postResponse.getId());
@@ -94,7 +108,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.save(any(Post.class))).thenThrow(new ErroAoSalvarPostException());
 
-        assertThrows(ErroAoSalvarPostException.class, () -> postService.cadastrar(postagemRequest));
+        assertThrows(ErroAoSalvarPostException.class, () -> service.cadastrar(postagemRequest));
     }
 
     @Test
@@ -131,7 +145,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.findAllByUsuarioId(usuario.getId())).thenReturn(postagens);
 
-        List<PostResponse> listaPostagens = postService.listar();
+        List<PostResponse> listaPostagens = service.listar();
 
         assertFalse(listaPostagens.isEmpty());
         assertEquals(2, listaPostagens.size());
@@ -182,7 +196,7 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
         when(repository.recentes(usuarioLogado.getId())).thenReturn(List.of(postRecenteResponseUsuarioMock, postRecenteResponseAmigoMock));
 
-        List<PostRecenteDetalheResponse> recentes = postService.recentes();
+        List<PostRecenteDetalheResponse> recentes = service.recentes();
 
         assertNotNull(recentes);
         assertEquals(2, recentes.size());
@@ -238,12 +252,184 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
         when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
 
-        List<PostResponse> postsUsuario = postService.listarPostsUsuarioAmigo(idUsuario);
+        List<PostResponse> postsUsuario = service.listarPostsUsuarioAmigo(idUsuario);
 
         assertNotNull(postsUsuario);
         assertEquals(1, postsUsuario.size());
         assertEquals(descricao, postsUsuario.getFirst().getDescricao());
         assertEquals(dataCriacao, postsUsuario.getFirst().getDataCriacao());
+    }
+
+    @Test
+    @DisplayName("Deve curtir um post")
+    public void deveCurtirUmPost() {
+        var postId = UUID.randomUUID();
+        var usuarioId = UUID.randomUUID();
+        var amigoId = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .nome("Ester")
+            .amigos(new ArrayList<>())
+            .build();
+
+        Usuario amigo = Usuario.builder()
+            .id(amigoId)
+            .nome("Amigo")
+            .amigos(new ArrayList<>())
+            .build();
+
+        usuario.getAmigos().add(
+            UsuarioAmigo.builder()
+            .id(UUID.randomUUID())
+            .usuario(usuario)
+            .amigo(amigo)
+            .status(UsuarioAmigoStatusEnum.AMIGO)
+            .build()
+        );
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuario)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+        when(postCurtidaRepository.findByPostIdAndUsuarioId(post.getId(), usuario.getId())).thenReturn(Optional.empty());
+
+        PostCurtidaResponse postCurtidaResponse = service.curtir(postId);
+
+        assertNotNull(postCurtidaResponse);
+        verify(postCurtidaRepository, times(1)).save(any(PostCurtida.class));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando o post não for encontrado")
+    public void deveLancarExcecaoPostNaoEncontrado() {
+        var postNaoExistente = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(UUID.randomUUID())
+            .nome("Ester")
+            .amigos(Collections.emptyList())
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(repository.findById(postNaoExistente)).thenReturn(Optional.empty());
+
+        assertThrows(PostNaoEncontradoException.class, () -> service.curtir(postNaoExistente));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando o usuário não for autorizado a curtir o post")
+    public void deveLancarExcecaoUsuarioNaoAutorizadoParaCurtir() {
+        var postId = UUID.randomUUID();
+        var usuarioIdLogado = UUID.randomUUID();
+        var usuarioIdNaoAmigo = UUID.randomUUID();
+
+        Usuario usuarioLogado = Usuario.builder()
+            .id(usuarioIdLogado)
+            .nome("Ester")
+            .amigos(Collections.emptyList())
+            .build();
+
+        Usuario usuarioNaoAmigo = Usuario.builder()
+            .id(usuarioIdNaoAmigo)
+            .build();
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuarioNaoAmigo)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+        when(postCurtidaRepository.findByPostIdAndUsuarioId(postId, usuarioLogado.getId())).thenReturn(Optional.empty());
+
+        assertThrows(UsuarioNaoAutorizadoParaCurtirException.class, () -> service.curtir(postId));
+    }
+
+    @Test
+    @DisplayName("Deve remover curtida no post do usuário logado")
+    public void deveRemoverCurtidaNoPost() {
+        var postId = UUID.randomUUID();
+        var usuarioId = UUID.randomUUID();
+        var curtidaId = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .nome("Ester")
+            .amigos(Collections.emptyList())
+            .build();
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuario)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        PostCurtida postCurtida = PostCurtida.builder()
+            .id(curtidaId)
+            .post(post)
+            .usuario(usuario)
+            .data(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(postCurtidaRepository.findByPostIdAndUsuarioId(postId, usuarioId)).thenReturn(Optional.of(postCurtida));
+
+        service.removerCurtida(postId);
+
+        verify(postCurtidaRepository, times(1)).delete(postCurtida);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando a curtida não for encontrada para descurtir")
+    public void deveLancarExcecaoPostCurtidaNaoEncontrada() {
+        var idCurtidaInexistente = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(UUID.randomUUID())
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(repository.findById(idCurtidaInexistente)).thenReturn(Optional.empty());
+
+        assertThrows(PostCurtidaNaoEncontradaException.class, () -> service.removerCurtida(idCurtidaInexistente));
+    }
+
+    @Test
+    @DisplayName("Deve contar a quantidade de curtidas no post do usuário")
+    public void deveContarQuantidadeCurtidas() {
+        var postId = UUID.randomUUID();
+
+        Post post = Post.builder()
+            .id(postId)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .build();
+
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+        when(postCurtidaRepository.countByPost(post)).thenReturn(5L);
+
+        PostTotalDeCurtidaResponse quantidadeCurtidas = service.totalCurtida(postId);
+
+        assertNotNull(quantidadeCurtidas);
+        assertEquals(5L, quantidadeCurtidas.getTotal());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando o post não for encontrado ao contar curtidas")
+    public void deveLancarExcecaoPostNaoEncontradoContarCurtidas() {
+        var postId = UUID.randomUUID();
+
+        when(repository.findById(postId)).thenReturn(Optional.empty());
+
+        assertThrows(PostNaoEncontradoException.class, () -> service.totalCurtida(postId));
     }
 
 }

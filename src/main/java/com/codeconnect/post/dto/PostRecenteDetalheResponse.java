@@ -29,4 +29,7 @@ public class PostRecenteDetalheResponse {
     @Schema(description = "Detalhes do usuário que fez a postagem")
     private PostRecenteDetalheUsuarioResponse usuario;
 
+    @Schema(description = "Retorna verdadeiro se o post foi curtido pelo usuário logado", example = "true")
+    private boolean curtido;
+
 }
