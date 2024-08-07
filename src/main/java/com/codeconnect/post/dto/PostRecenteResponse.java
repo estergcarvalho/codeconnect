@@ -43,4 +43,8 @@ public interface PostRecenteResponse {
     @JsonProperty("tipo_imagem")
     @Column(name = "tipo_imagem")
     String getTipoImagem();
+
+    @Schema(description = "Retorna verdadeiro se o post foi curtido pelo usuário logado", example = "true")
+    boolean getCurtido();
+
 }
