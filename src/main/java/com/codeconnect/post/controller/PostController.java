@@ -1,7 +1,7 @@
 package com.codeconnect.post.controller;
 
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostQuantidadeDeCurtidaResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
@@ -132,8 +132,8 @@ public class PostController {
         }
     )
     @GetMapping("/{id}/total-curtidas")
-    public ResponseEntity<PostQuantidadeDeCurtidaResponse> quantidadeCurtida(@PathVariable UUID id) {
-        PostQuantidadeDeCurtidaResponse totalCurtidas = service.quantidadeCurtidas(id);
+    public ResponseEntity<PostTotalDeCurtidaResponse> totalCurtida(@PathVariable UUID id) {
+        PostTotalDeCurtidaResponse totalCurtidas = service.totalCurtida(id);
 
         return ResponseEntity.ok(totalCurtidas);
     }

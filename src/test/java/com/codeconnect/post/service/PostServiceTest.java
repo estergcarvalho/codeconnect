@@ -1,7 +1,7 @@
 package com.codeconnect.post.service;
 
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostQuantidadeDeCurtidaResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
@@ -416,10 +416,10 @@ public class PostServiceTest {
         when(repository.findById(postId)).thenReturn(Optional.of(post));
         when(postCurtidaRepository.countByPost(post)).thenReturn(5L);
 
-        PostQuantidadeDeCurtidaResponse quantidadeCurtidas = service.quantidadeCurtidas(postId);
+        PostTotalDeCurtidaResponse quantidadeCurtidas = service.totalCurtida(postId);
 
         assertNotNull(quantidadeCurtidas);
-        assertEquals(5L, quantidadeCurtidas.getQuantidadeCurtida());
+        assertEquals(5L, quantidadeCurtidas.getTotal());
     }
 
     @Test
@@ -429,7 +429,7 @@ public class PostServiceTest {
 
         when(repository.findById(postId)).thenReturn(Optional.empty());
 
-        assertThrows(PostNaoEncontradoException.class, () -> service.quantidadeCurtidas(postId));
+        assertThrows(PostNaoEncontradoException.class, () -> service.totalCurtida(postId));
     }
 
 }

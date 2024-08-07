@@ -1,7 +1,7 @@
 package com.codeconnect.post.service;
 
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostQuantidadeDeCurtidaResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheUsuarioResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
@@ -207,7 +207,7 @@ public class PostService {
         log.info("Curtida removida com sucesso");
     }
 
-    public PostQuantidadeDeCurtidaResponse quantidadeCurtidas(UUID postId) {
+    public PostTotalDeCurtidaResponse totalCurtida(UUID postId) {
         log.info("Iniciando a contagem de curtidas do post: {}", postId);
 
         Post post = repository.findById(postId)
@@ -215,8 +215,8 @@ public class PostService {
 
         var totalCurtida = postCurtidaRepository.countByPost(post);
 
-        return PostQuantidadeDeCurtidaResponse.builder()
-            .quantidadeCurtida(totalCurtida)
+        return PostTotalDeCurtidaResponse.builder()
+            .total(totalCurtida)
             .build();
     }
 
