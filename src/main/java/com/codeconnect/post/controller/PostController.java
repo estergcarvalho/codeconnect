@@ -94,7 +94,7 @@ public class PostController {
 
     @Operation(
         summary = "Adicionar uma nova curtida a um post",
-        description = "Registra uma nova curtida no post com base nos dados fornecidos",
+        description = "Registra uma nova curtida com base no id fornecido",
         responses = {
             @ApiResponse(responseCode = "200", description = "Curtida realizada com sucesso"),
             @ApiResponse(responseCode = "409", description = "O usuário já curtiu esse Post")
@@ -109,8 +109,7 @@ public class PostController {
 
     @Operation(
         summary = "Remover curtida no post",
-        description = "Remove uma curtida de um post com base no Id da curtida fornecido. Se a operação for bem sucedida," +
-            "a curtida será removida no post do usuário",
+        description = "Remove uma curtida de um post com base no id do post",
         responses = {
             @ApiResponse(responseCode = "204", description = "Curtida removida com sucesso"),
             @ApiResponse(responseCode = "401", description = "Não autorizado remover a curtida")

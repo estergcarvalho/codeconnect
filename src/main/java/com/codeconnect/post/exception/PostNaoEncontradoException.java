@@ -10,7 +10,7 @@ public class PostNaoEncontradoException extends CodeConnectException {
     public ProblemDetail handleProblemDetail() {
         ProblemDetail detalheProblema = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
 
-        detalheProblema.setTitle("Post do usuário não encontrado");
+        detalheProblema.setTitle("Post não encontrado");
 
         return detalheProblema;
     }

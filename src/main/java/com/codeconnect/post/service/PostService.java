@@ -149,18 +149,18 @@ public class PostService {
         return List.of();
     }
 
-    public PostCurtidaResponse curtir(UUID postCurtidaId) {
-        log.info("Iniciando a curtida no post: {}", postCurtidaId);
+    public PostCurtidaResponse curtir(UUID postId) {
+        log.info("Iniciando a curtida no post: {}", postId);
 
         Usuario usuarioLogado = tokenService.obterUsuarioToken();
 
-        Post post = repository.findById(postCurtidaId)
+        Post post = repository.findById(postId)
             .orElseThrow(PostNaoEncontradoException::new);
 
-        var isCurtido = postCurtidaRepository.findByPostIdAndUsuarioId(post.getId(), usuarioLogado.getId());
-        if (isCurtido.isPresent()) {
+        var curtida = postCurtidaRepository.findByPostIdAndUsuarioId(post.getId(), usuarioLogado.getId());
+        if (curtida.isPresent()) {
             return PostCurtidaResponse.builder()
-                .id(isCurtido.get().getId())
+                .id(curtida.get().getId())
                 .build();
         }
 

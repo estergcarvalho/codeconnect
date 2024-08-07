@@ -290,19 +290,19 @@ public class PostServiceTest {
 
         Post post = Post.builder()
             .id(postId)
-            .usuario(amigo)
+            .usuario(usuario)
             .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .build();
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
         when(repository.findById(postId)).thenReturn(Optional.of(post));
         when(postCurtidaRepository.findByPostIdAndUsuarioId(post.getId(), usuario.getId())).thenReturn(Optional.empty());
 
-        PostCurtidaResponse response = service.curtir(postId);
+        PostCurtidaResponse postCurtidaResponse = service.curtir(postId);
 
-        assertNotNull(response);
-        verify(postCurtidaRepository).save(any(PostCurtida.class));
-
+        assertNotNull(postCurtidaResponse);
+        verify(postCurtidaRepository, times(1)).save(any(PostCurtida.class));
     }
 
     @Test
