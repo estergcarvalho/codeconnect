@@ -1,6 +1,9 @@
 package com.codeconnect.post.controller;
 
+import com.codeconnect.post.dto.PostComentarioRequest;
+import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
+import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
 import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRequest;
@@ -10,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -136,5 +140,23 @@ public class PostController {
 
         return ResponseEntity.ok(totalCurtidas);
     }
+    //add swagger
+
+    @PostMapping("/comentar")
+    public ResponseEntity<PostComentarioResponse> comentar(@RequestBody PostComentarioRequest postComentarioRequest) {
+        PostComentarioResponse comentarioResponse = service.comentar(postComentarioRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(comentarioResponse);
+    }
+
+    //add swagger
+    @GetMapping("/{id}/total-comentarios")
+    public ResponseEntity<PostTotalDeComentarioResponse> totalComentario(@PathVariable UUID id) {
+        PostTotalDeComentarioResponse totalComentario = service.totalComentario(id);
+
+        return ResponseEntity.ok(totalComentario);
+    }
+
+
 
 }

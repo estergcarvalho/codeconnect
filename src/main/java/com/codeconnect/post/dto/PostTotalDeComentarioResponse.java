@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostTotalDeCurtidaResponse {
+public class PostTotalDeComentarioResponse {
 
-    @Schema(description = "Retorna o total de curtidas do post", example = "10")
+    @Schema(description = "Retorna o total de comentários do post", example = "10")
     private Long total;
 
 }
