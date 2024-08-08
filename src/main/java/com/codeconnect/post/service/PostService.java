@@ -4,13 +4,13 @@ import com.codeconnect.post.dto.PostComentarioRequest;
 import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostComentarioUsuarioDetalheResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
-import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheUsuarioResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
+import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.exception.ErroAoSalvarPostException;
 import com.codeconnect.post.exception.PostCurtidaNaoEncontradaException;
 import com.codeconnect.post.exception.PostNaoEncontradoException;
@@ -290,6 +290,26 @@ public class PostService {
             .build();
     }
 
-   
+    public List<PostComentarioResponse> listarComentarios(UUID postId) {
+        log.info("Iniciando a listagem dos comentários do post");
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        List<PostComentario> comentarios = postComentarioRepository.findAllByPostId(postId);
+
+        return comentarios.stream()
+            .map(comentario -> PostComentarioResponse.builder()
+                .id(comentario.getId())
+                .descricao(comentario.getDescricao())
+                .dataCriacao(comentario.getDataCriacao())
+                .usuario(PostComentarioUsuarioDetalheResponse.builder()
+                    .id(usuarioLogado.getId())
+                    .nome(usuarioLogado.getNome())
+                    .imagem(usuarioLogado.getImagem())
+                    .tipoImagem(usuarioLogado.getTipoImagem())
+                    .build())
+                .build())
+            .toList();
+    }
 
 }

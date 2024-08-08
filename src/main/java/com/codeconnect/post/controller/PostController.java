@@ -3,17 +3,16 @@ package com.codeconnect.post.controller;
 import com.codeconnect.post.dto.PostComentarioRequest;
 import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
-import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
+import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,7 +127,7 @@ public class PostController {
 
     @Operation(
         summary = "Obter total de curtidas de um post",
-        description = "Retorna o total de curtidas de um post com base no ID fornecido",
+        description = "Retorna o total de curtidas de um post com base no id fornecido",
         responses = {
             @ApiResponse(responseCode = "200", description = "Quantidade de curtidas retornada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Post não encontrado")
@@ -140,8 +139,16 @@ public class PostController {
 
         return ResponseEntity.ok(totalCurtidas);
     }
-    //add swagger
 
+
+    @Operation(
+        summary = "Adicionar comentario a um post",
+        description = "Registra um comentário ao post com base no id fornecido",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Comentário realizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Post não encontrado")
+        }
+    )
     @PostMapping("/comentar")
     public ResponseEntity<PostComentarioResponse> comentar(@RequestBody PostComentarioRequest postComentarioRequest) {
         PostComentarioResponse comentarioResponse = service.comentar(postComentarioRequest);
@@ -149,7 +156,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(comentarioResponse);
     }
 
-    //add swagger
+    @Operation(
+        summary = "Obter total de comentários de um post",
+        description = "Retorna o total de comentários de um post com base no id fornecido",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Quantidade de curtidas retornada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Post não encontrado")
+        }
+    )
     @GetMapping("/{id}/total-comentarios")
     public ResponseEntity<PostTotalDeComentarioResponse> totalComentario(@PathVariable UUID id) {
         PostTotalDeComentarioResponse totalComentario = service.totalComentario(id);
@@ -157,6 +171,19 @@ public class PostController {
         return ResponseEntity.ok(totalComentario);
     }
 
+    @Operation(
+        summary = "Lista os comentários do post",
+        description = "Retorna uma lista de comentário do post",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de comentários retornado com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+        }
+    )
+    @GetMapping("/{postId}/comentarios")
+    public ResponseEntity<List<PostComentarioResponse>> listarComentarios(@PathVariable UUID postId) {
+        List<PostComentarioResponse> comentarios = service.listarComentarios(postId);
 
+        return ResponseEntity.ok(comentarios);
+    }
 
 }
