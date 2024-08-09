@@ -1,18 +1,25 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.post.dto.PostComentarioRequest;
+import com.codeconnect.post.dto.PostComentarioResponse;
+import com.codeconnect.post.dto.PostComentarioUsuarioDetalheResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheUsuarioResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
+import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.exception.ErroAoSalvarPostException;
 import com.codeconnect.post.exception.PostCurtidaNaoEncontradaException;
 import com.codeconnect.post.exception.PostNaoEncontradoException;
+import com.codeconnect.post.exception.UsuarioNaoAutorizadoParaComentarException;
 import com.codeconnect.post.exception.UsuarioNaoAutorizadoParaCurtirException;
 import com.codeconnect.post.model.Post;
+import com.codeconnect.post.model.PostComentario;
 import com.codeconnect.post.model.PostCurtida;
+import com.codeconnect.post.repository.PostComentarioRepository;
 import com.codeconnect.post.repository.PostCurtidaRepository;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
@@ -43,6 +50,9 @@ public class PostService {
 
     @Autowired
     private PostCurtidaRepository postCurtidaRepository;
+
+    @Autowired
+    private PostComentarioRepository postComentarioRepository;
 
     public PostResponse cadastrar(PostRequest postRequest) {
         log.info("Iniciando cadastro da postagem");
@@ -218,6 +228,88 @@ public class PostService {
         return PostTotalDeCurtidaResponse.builder()
             .total(totalCurtida)
             .build();
+    }
+
+    public PostComentarioResponse comentar(PostComentarioRequest postComentarioRequest) {
+        log.info("Iniciando o comentário no post: {}", postComentarioRequest);
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        Post post = repository.findById(postComentarioRequest.getId())
+            .orElseThrow(PostNaoEncontradoException::new);
+
+        Usuario postUsuario = post.getUsuario();
+        boolean isUsuarioLogado = usuarioLogado.getId().equals(postUsuario.getId());
+
+        boolean isAmigoUsuario = false;
+        for (UsuarioAmigo usuarioAmigo : usuarioLogado.getAmigos()) {
+            if (usuarioAmigo.getAmigo().getId().equals(postUsuario.getId())) {
+                isAmigoUsuario = true;
+                break;
+            }
+        }
+
+        if (!isUsuarioLogado && !isAmigoUsuario) {
+            throw new UsuarioNaoAutorizadoParaComentarException();
+        }
+
+        Timestamp dataCriacao = new Timestamp(System.currentTimeMillis());
+
+        PostComentario comentario = PostComentario.builder()
+            .usuario(usuarioLogado)
+            .post(post)
+            .descricao(postComentarioRequest.getDescricao())
+            .dataCriacao(dataCriacao)
+            .build();
+
+        postComentarioRepository.save(comentario);
+
+        return PostComentarioResponse.builder()
+            .id(comentario.getId())
+            .descricao(comentario.getDescricao())
+            .dataCriacao(comentario.getDataCriacao())
+            .usuario(PostComentarioUsuarioDetalheResponse.builder()
+                .id(usuarioLogado.getId())
+                .nome(usuarioLogado.getNome())
+                .imagem(usuarioLogado.getImagem())
+                .tipoImagem(usuarioLogado.getTipoImagem())
+                .build())
+            .build();
+    }
+
+    public PostTotalDeComentarioResponse totalComentario(UUID postId) {
+        log.info("Iniciando a contagem de comentários do post: {}", postId);
+
+        Post post = repository.findById(postId)
+            .orElseThrow(PostNaoEncontradoException::new);
+
+        var totalComentario = postComentarioRepository.countByPost(post);
+
+        return PostTotalDeComentarioResponse.builder()
+            .total(totalComentario)
+            .build();
+    }
+
+    public List<PostComentarioResponse> listarComentarios(UUID postId) {
+        log.info("Iniciando a listagem dos comentários do post");
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        List<PostComentario> comentarios = postComentarioRepository.findAllByPostId(postId);
+
+        return comentarios.stream()
+            .map(comentario -> PostComentarioResponse.builder()
+                .id(comentario.getId())
+                .descricao(comentario.getDescricao())
+                .dataCriacao(comentario.getDataCriacao())
+                .usuario(PostComentarioUsuarioDetalheResponse.builder()
+                    .id(usuarioLogado.getId())
+                    .nome(usuarioLogado.getNome())
+                    .imagem(usuarioLogado.getImagem())
+                    .tipoImagem(usuarioLogado.getTipoImagem())
+                    .build())
+                .build())
+            .toList();
     }
 
 }

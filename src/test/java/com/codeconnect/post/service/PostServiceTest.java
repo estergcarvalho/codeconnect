@@ -1,17 +1,23 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.post.dto.PostComentarioRequest;
+import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
-import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
+import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
+import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.exception.ErroAoSalvarPostException;
 import com.codeconnect.post.exception.PostCurtidaNaoEncontradaException;
 import com.codeconnect.post.exception.PostNaoEncontradoException;
+import com.codeconnect.post.exception.UsuarioNaoAutorizadoParaComentarException;
 import com.codeconnect.post.exception.UsuarioNaoAutorizadoParaCurtirException;
 import com.codeconnect.post.model.Post;
+import com.codeconnect.post.model.PostComentario;
 import com.codeconnect.post.model.PostCurtida;
+import com.codeconnect.post.repository.PostComentarioRepository;
 import com.codeconnect.post.repository.PostCurtidaRepository;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
@@ -30,6 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +66,9 @@ public class PostServiceTest {
 
     @Mock
     private PostCurtidaRepository postCurtidaRepository;
+
+    @Mock
+    private PostComentarioRepository postComentarioRepository;
 
     @Mock
     private TokenService tokenService;
@@ -281,11 +291,11 @@ public class PostServiceTest {
 
         usuario.getAmigos().add(
             UsuarioAmigo.builder()
-            .id(UUID.randomUUID())
-            .usuario(usuario)
-            .amigo(amigo)
-            .status(UsuarioAmigoStatusEnum.AMIGO)
-            .build()
+                .id(UUID.randomUUID())
+                .usuario(usuario)
+                .amigo(amigo)
+                .status(UsuarioAmigoStatusEnum.AMIGO)
+                .build()
         );
 
         Post post = Post.builder()
@@ -404,8 +414,8 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Deve contar a quantidade de curtidas no post do usuário")
-    public void deveContarQuantidadeCurtidas() {
+    @DisplayName("Deve retornar o total de curtidas no post do usuário")
+    public void deveRetonarTotalCurtidas() {
         var postId = UUID.randomUUID();
 
         Post post = Post.builder()
@@ -423,13 +433,239 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando o post não for encontrado ao contar curtidas")
+    @DisplayName("Deve lançar exceção quando o post não for encontrado")
     public void deveLancarExcecaoPostNaoEncontradoContarCurtidas() {
         var postId = UUID.randomUUID();
 
         when(repository.findById(postId)).thenReturn(Optional.empty());
 
         assertThrows(PostNaoEncontradoException.class, () -> service.totalCurtida(postId));
+    }
+
+    @Test
+    @DisplayName("Deve cadastrar um comentário no post do amigo")
+    public void deveCadastrarUmComentario() {
+        var postId = UUID.randomUUID();
+        var usuarioId = UUID.randomUUID();
+        var amigoId = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .nome("Ester")
+            .amigos(new ArrayList<>())
+            .build();
+
+        Usuario amigo = Usuario.builder()
+            .id(amigoId)
+            .nome("Amigo")
+            .amigos(new ArrayList<>())
+            .build();
+
+        usuario.getAmigos().add(
+            UsuarioAmigo.builder()
+                .id(UUID.randomUUID())
+                .usuario(usuario)
+                .amigo(amigo)
+                .status(UsuarioAmigoStatusEnum.AMIGO)
+                .build()
+        );
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(amigo)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        PostComentarioRequest comentarioRequest = PostComentarioRequest.builder()
+            .id(postId)
+            .descricao("Parabéns amigo")
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+        when(postComentarioRepository.findById(postId)).thenReturn(Optional.empty());
+
+        PostComentarioResponse postComentarioResponse = service.comentar(comentarioRequest);
+
+        assertNotNull(postComentarioResponse);
+        assertEquals(postComentarioResponse.getDescricao(), comentarioRequest.getDescricao());
+        verify(postComentarioRepository, times(1)).save(any(PostComentario.class));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando o usuário não for autorizado comentar o post")
+    public void deveLancarExcecaoUsuarioNaoAutorizadoComentar() {
+        var postId = UUID.randomUUID();
+        var usuarioIdLogado = UUID.randomUUID();
+        var usuarioIdNaoAmigo = UUID.randomUUID();
+
+        Usuario usuarioLogado = Usuario.builder()
+            .id(usuarioIdLogado)
+            .nome("Ester")
+            .amigos(Collections.emptyList())
+            .build();
+
+        Usuario usuarioNaoAmigo = Usuario.builder()
+            .id(usuarioIdNaoAmigo)
+            .build();
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuarioNaoAmigo)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        PostComentarioRequest postComentarioRequest = PostComentarioRequest.builder()
+            .id(postId)
+            .descricao("Ótima notícia!")
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+
+        assertThrows(UsuarioNaoAutorizadoParaComentarException.class, () -> service.comentar(postComentarioRequest));
+    }
+
+    @Test
+    @DisplayName("Deve permitir que o usuário comente o proprio post ")
+    public void DevePermitirUsuarioComenteProprioPost() {
+        var postId = UUID.randomUUID();
+        var usuarioId = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .nome("Ester")
+            .amigos(new ArrayList<>())
+            .build();
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuario)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        PostComentarioRequest comentarioRequest = PostComentarioRequest.builder()
+            .id(postId)
+            .descricao("Obrigada pela felicitações")
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuario);
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+        when(postComentarioRepository.findById(postId)).thenReturn(Optional.empty());
+
+        PostComentarioResponse postComentarioResponse = service.comentar(comentarioRequest);
+
+        assertNotNull(postComentarioResponse);
+        assertEquals(postComentarioResponse.getDescricao(), comentarioRequest.getDescricao());
+        verify(postComentarioRepository, times(1)).save(any(PostComentario.class));
+    }
+
+    @Test
+    @DisplayName("Deve retornar o total de comentário de um post")
+    public void deveRetornarTotalComentarios() {
+        var postId = UUID.randomUUID();
+        var usuarioId = UUID.randomUUID();
+
+        Usuario usuario = Usuario.builder()
+            .id(usuarioId)
+            .nome("Ester")
+            .amigos(new ArrayList<>())
+            .build();
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuario)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        long totalComentarios = 5L;
+
+        when(repository.findById(postId)).thenReturn(Optional.of(post));
+        when(postComentarioRepository.countByPost(post)).thenReturn(totalComentarios);
+
+        PostTotalDeComentarioResponse totalDeComentarios = service.totalComentario(postId);
+
+        assertNotNull(totalDeComentarios);
+        assertEquals(5L, totalDeComentarios.getTotal());
+        verify(postComentarioRepository, times(1)).countByPost(post);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando o post não for encontrado")
+    public void deveLancarExcecaoPostNaoEncontradoRetornarTotalComentarios() {
+        var postId = UUID.randomUUID();
+
+        when(repository.findById(postId)).thenReturn(Optional.empty());
+
+        assertThrows(PostNaoEncontradoException.class, () -> service.totalComentario(postId));
+    }
+
+    @Test
+    @DisplayName("Deve listar os comentários a partir de um post id")
+    public void deveListarComentario() {
+        UUID postId = UUID.randomUUID();
+        UUID usuarioId = UUID.randomUUID();
+        UUID amigoId = UUID.randomUUID();
+        UUID idComentario1 = UUID.randomUUID();
+        UUID idComentario2 = UUID.randomUUID();
+
+        Usuario usuarioLogado = Usuario.builder()
+            .id(usuarioId)
+            .nome("Ester")
+            .imagem("imagem")
+            .tipoImagem("image/png")
+            .build();
+
+        Usuario amigo = Usuario.builder()
+            .id(amigoId)
+            .nome("Joao")
+            .imagem("imagem")
+            .tipoImagem("image/png")
+            .build();
+
+        Post post = Post.builder()
+            .id(postId)
+            .usuario(usuarioLogado)
+            .descricao("Estou feliz em compartilhar que vou começar em um novo emprego")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        PostComentario comentarioAmigo = PostComentario.builder()
+            .id(idComentario1)
+            .post(post)
+            .usuario(amigo)
+            .descricao("Parabéns")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        PostComentario comentarioUsuario = PostComentario.builder()
+            .id(idComentario2)
+            .usuario(usuarioLogado)
+            .post(post)
+            .descricao("Valeu")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
+        List<PostComentario> comentarios = Arrays.asList(comentarioAmigo, comentarioUsuario);
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
+        when(postComentarioRepository.findAllByPostId(postId)).thenReturn(comentarios);
+
+        List<PostComentarioResponse> resultado = service.listarComentarios(postId);
+
+        assertEquals(2, resultado.size());
+        assertEquals(usuarioLogado.getId(), resultado.getFirst().getUsuario().getId());
+        assertEquals(comentarioUsuario.getId(), resultado.get(1).getId());
+        assertEquals(comentarioUsuario.getDescricao(), resultado.get(1).getDescricao());
+        assertEquals(comentarioUsuario.getDataCriacao(), resultado.get(1).getDataCriacao());
+        assertEquals(comentarioAmigo.getId(), resultado.getFirst().getId());
+        assertEquals(comentarioAmigo.getDescricao(), resultado.getFirst().getDescricao());
+        assertEquals(comentarioAmigo.getDataCriacao(), resultado.getFirst().getDataCriacao());
+
+        verify(postComentarioRepository, times(1)).findAllByPostId(postId);
     }
 
 }
