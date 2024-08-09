@@ -1,7 +1,6 @@
 package com.codeconnect.post.model;
 
 import com.codeconnect.usuario.model.Usuario;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
