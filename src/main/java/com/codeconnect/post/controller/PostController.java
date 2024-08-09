@@ -140,13 +140,12 @@ public class PostController {
         return ResponseEntity.ok(totalCurtidas);
     }
 
-
     @Operation(
         summary = "Adicionar comentario a um post",
         description = "Registra um comentário ao post com base no id fornecido",
         responses = {
             @ApiResponse(responseCode = "200", description = "Comentário realizado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Post não encontrado")
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
         }
     )
     @PostMapping("/comentar")
@@ -160,7 +159,7 @@ public class PostController {
         summary = "Obter total de comentários de um post",
         description = "Retorna o total de comentários de um post com base no id fornecido",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Quantidade de curtidas retornada com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Quantidade de comentarios retornada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Post não encontrado")
         }
     )
