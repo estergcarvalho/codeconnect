@@ -13,23 +13,25 @@ import java.util.UUID;
 public interface PostRepository extends JpaRepository<Post, UUID> {
 
     @Query(value = """
-          SELECT DISTINCT(p.id),
-              u.id           AS idUsuario,
-              u.nome         AS usuarioNome,
-              u.profissao    AS profissao,
-              p.descricao,
-              p.data_criacao AS dataCriacao,
-              u.imagem       AS imagem,
-              u.tipo_imagem  AS tipoImagem,
-              CASE WHEN pc.id IS NOT NULL THEN TRUE ELSE FALSE END AS curtido
-            FROM post p
-               INNER JOIN usuario u ON p.id_usuario = u.id
-               LEFT JOIN usuario_amigo ua ON ua.id_usuario = p.id_usuario
-               LEFT JOIN post_curtida pc ON p.id = pc.id_post AND pc.id_usuario = :usuarioId
-            WHERE ua.id_usuario = :usuarioId
-              OR ua.id_amigo = :usuarioId
-              OR p.id_usuario = :usuarioId
-            ORDER BY p.data_criacao DESC;
+           SELECT DISTINCT(p.id),
+               u.id           AS idUsuario,
+               u.nome         AS usuarioNome,
+               u.profissao    AS profissao,
+               p.descricao,
+               p.data_criacao AS dataCriacao,
+               u.imagem       AS imagem,
+               u.tipo_imagem  AS tipoImagem,
+               CASE WHEN pc.id IS NOT NULL THEN TRUE ELSE FALSE END AS curtido,
+             (SELECT count(*) FROM post_curtida pc2 WHERE pc2.id_post = p.id) AS totalCurtidas,
+             (SELECT count(*) FROM post_comentario pc3 WHERE pc3.id_post = p.id) AS totalComentarios
+             FROM post p
+                INNER JOIN usuario u ON p.id_usuario = u.id
+                LEFT JOIN usuario_amigo ua ON ua.id_usuario = p.id_usuario
+                LEFT JOIN post_curtida pc ON p.id = pc.id_post AND pc.id_usuario = :usuarioId
+             WHERE ua.id_usuario = :usuarioId
+               OR ua.id_amigo = :usuarioId
+               OR p.id_usuario = :usuarioId
+             ORDER BY p.data_criacao DESC;
         """, nativeQuery = true)
     List<PostRecenteResponse> recentes(UUID usuarioId);
 

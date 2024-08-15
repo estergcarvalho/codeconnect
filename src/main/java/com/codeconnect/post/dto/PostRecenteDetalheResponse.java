@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -31,5 +32,14 @@ public class PostRecenteDetalheResponse {
 
     @Schema(description = "Retorna verdadeiro se o post foi curtido pelo usuário logado", example = "true")
     private boolean curtido;
+
+    @Schema(description = "Retorna o total de curtidas do post", example = "10")
+    private PostTotalDeCurtidaResponse totalCurtidas;
+
+    @Schema(description = "Retorna o total de comentários do post", example = "28")
+    private PostTotalDeComentarioResponse totalComentarios;
+
+    @Schema(description = "Lista de comentários do post")
+    private List<PostComentarioResponse> comentarios;
 
 }
