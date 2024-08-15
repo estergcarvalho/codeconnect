@@ -22,8 +22,8 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
                u.imagem       AS imagem,
                u.tipo_imagem  AS tipoImagem,
                CASE WHEN pc.id IS NOT NULL THEN TRUE ELSE FALSE END AS curtido,
-             (SELECT count(*) FROM post_curtida pc2 WHERE pc2.id_post = p.id) AS totalCurtidas,
-             (SELECT count(*) FROM post_comentario pc3 WHERE pc3.id_post = p.id) AS totalComentarios
+               (SELECT count(*) FROM post_curtida pc2 WHERE pc2.id_post = p.id) AS totalCurtidas,
+               (SELECT count(*) FROM post_comentario pc3 WHERE pc3.id_post = p.id) AS totalComentarios
              FROM post p
                 INNER JOIN usuario u ON p.id_usuario = u.id
                 LEFT JOIN usuario_amigo ua ON ua.id_usuario = p.id_usuario
