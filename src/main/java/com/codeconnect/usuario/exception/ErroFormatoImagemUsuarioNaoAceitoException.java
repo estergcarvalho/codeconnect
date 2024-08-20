@@ -14,4 +14,5 @@ public class ErroFormatoImagemUsuarioNaoAceitoException extends CodeConnectExcep
 
         return detalheProblema;
     }
+
 }
