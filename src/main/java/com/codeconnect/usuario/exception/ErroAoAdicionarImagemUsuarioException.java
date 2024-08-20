@@ -14,4 +14,5 @@ public class ErroAoAdicionarImagemUsuarioException extends CodeConnectException 
 
         return detalheProblema;
     }
+
 }

@@ -47,4 +47,10 @@ public interface PostRecenteResponse {
     @Schema(description = "Retorna verdadeiro se o post foi curtido pelo usuário logado", example = "true")
     boolean getCurtido();
 
+    @Schema(description = "Retorna o total de curtidas do post", example = "10")
+    Long getTotalCurtidas();
+
+    @Schema(description = "Retorna o total de comentários do post", example = "28")
+    Long getTotalComentarios();
+
 }

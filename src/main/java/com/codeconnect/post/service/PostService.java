@@ -103,26 +103,50 @@ public class PostService {
     }
 
     public List<PostRecenteDetalheResponse> recentes() {
-        log.info("Iniciando a lista de post recentes do usuario");
+        log.info("Iniciando a lista de posts recentes do usuário");
 
         Usuario usuario = tokenService.obterUsuarioToken();
 
         List<PostRecenteResponse> postRecentes = repository.recentes(usuario.getId());
 
         return postRecentes.stream()
-            .map(post -> PostRecenteDetalheResponse.builder()
-                .id(post.getId())
-                .dataCriacao(post.getDataCriacao())
-                .descricao(post.getDescricao())
-                .curtido(post.getCurtido())
-                .usuario(PostRecenteDetalheUsuarioResponse.builder()
-                    .id(post.getIdUsuario())
-                    .nome(post.getUsuarioNome())
-                    .profissao(post.getProfissao())
-                    .imagem(post.getImagem())
-                    .tipoImagem(post.getTipoImagem())
-                    .build())
-                .build())
+            .map(post -> {
+                List<PostComentario> postComentario = postComentarioRepository.findAllByPostId(post.getId());
+                List<PostComentarioResponse> comentarioResponse = postComentario.stream()
+                    .map(comentario -> PostComentarioResponse.builder()
+                        .id(comentario.getId())
+                        .descricao(comentario.getDescricao())
+                        .dataCriacao(comentario.getDataCriacao())
+                        .usuario(PostComentarioUsuarioDetalheResponse.builder()
+                            .id(comentario.getUsuario().getId())
+                            .nome(comentario.getUsuario().getNome())
+                            .imagem(comentario.getUsuario().getImagem())
+                            .tipoImagem(comentario.getUsuario().getTipoImagem())
+                            .build())
+                        .build())
+                    .toList();
+
+                return PostRecenteDetalheResponse.builder()
+                    .id(post.getId())
+                    .dataCriacao(post.getDataCriacao())
+                    .descricao(post.getDescricao())
+                    .usuario(PostRecenteDetalheUsuarioResponse.builder()
+                        .id(post.getIdUsuario())
+                        .nome(post.getUsuarioNome())
+                        .profissao(post.getProfissao())
+                        .imagem(post.getImagem())
+                        .tipoImagem(post.getTipoImagem())
+                        .build())
+                    .curtido(post.getCurtido())
+                    .comentarios(comentarioResponse)
+                    .totalCurtidas(PostTotalDeCurtidaResponse.builder()
+                        .total(post.getTotalCurtidas())
+                        .build())
+                    .totalComentarios(PostTotalDeComentarioResponse.builder()
+                        .total(post.getTotalComentarios())
+                        .build())
+                    .build();
+            })
             .toList();
     }
 
