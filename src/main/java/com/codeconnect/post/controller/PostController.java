@@ -6,6 +6,7 @@ import com.codeconnect.post.dto.PostCurtidaResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRequest;
 import com.codeconnect.post.dto.PostResponse;
+import com.codeconnect.post.dto.PostPerfilResponse;
 import com.codeconnect.post.dto.PostTotalDeComentarioResponse;
 import com.codeconnect.post.dto.PostTotalDeCurtidaResponse;
 import com.codeconnect.post.service.PostService;
@@ -89,9 +90,8 @@ public class PostController {
         }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<List<PostResponse>> listarPostsUsuarioAmigo(@PathVariable UUID id) {
-        List<PostResponse> usuario = service.listarPostsUsuarioAmigo(id);
-
+    public ResponseEntity<PostPerfilResponse> listarPostsUsuarioAmigo(@PathVariable UUID id) {
+        PostPerfilResponse usuario = service.listarPostsUsuarioAmigo(id);
         return ResponseEntity.ok(usuario);
     }
 
