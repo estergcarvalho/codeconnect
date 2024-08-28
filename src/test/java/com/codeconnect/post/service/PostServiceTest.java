@@ -228,11 +228,11 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Deve listar postagens do usuário logado ou de um amigo do usuario")
+    @DisplayName("Deve listar postagens do usuário logado ou de um amigo do usuário")
     public void deveListarPostagensUsuarioVisitado() {
         UUID idUsuario = UUID.randomUUID();
         UUID idUsuarioLogado = UUID.randomUUID();
-        String descricao = "post do usuário que esto visitando o seu perfil";
+        String descricao = "post do usuário que estou visitando o perfil";
         Timestamp dataCriacao = new Timestamp(System.currentTimeMillis());
 
         Usuario usuario = Usuario.builder()
@@ -242,6 +242,7 @@ public class PostServiceTest {
                     .id(UUID.randomUUID())
                     .dataCriacao(dataCriacao)
                     .descricao(descricao)
+                    .comentarios(new ArrayList<>())
                     .build()
             ))
             .build();
