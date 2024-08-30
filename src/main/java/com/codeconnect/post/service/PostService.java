@@ -4,6 +4,8 @@ import com.codeconnect.post.dto.PostComentarioRequest;
 import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostComentarioUsuarioDetalheResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
+import com.codeconnect.post.dto.PostPerfilDetalheResponse;
+import com.codeconnect.post.dto.PostPerfilResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheUsuarioResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
@@ -23,6 +25,7 @@ import com.codeconnect.post.repository.PostComentarioRepository;
 import com.codeconnect.post.repository.PostCurtidaRepository;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
+import com.codeconnect.usuario.dto.UsuarioPerfilDetalheResponse;
 import com.codeconnect.usuario.exception.UsuarioNaoEncontradoException;
 import com.codeconnect.usuario.model.Usuario;
 import com.codeconnect.usuario.model.UsuarioAmigo;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -150,7 +154,7 @@ public class PostService {
             .toList();
     }
 
-    public List<PostResponse> listarPostsUsuarioAmigo(UUID idUsuario) {
+    public PostPerfilResponse listarPostsUsuarioAmigo(UUID idUsuario) {
         log.info("Iniciando a listagem de posts do perfil do usuario e amigo");
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -167,20 +171,52 @@ public class PostService {
             }
         }
 
+        List<PostPerfilDetalheResponse> postPerfil = new ArrayList<>();
+
         if (isUsuarioLogado || isAmigoUsuario) {
-            return usuario.getPosts().stream()
-                .map(post -> PostResponse.builder()
-                    .id(post.getId())
-                    .nome(usuario.getNome())
-                    .dataCriacao(post.getDataCriacao())
-                    .descricao(post.getDescricao())
-                    .imagem(usuario.getImagem())
-                    .tipoImagem(usuario.getTipoImagem())
-                    .build())
+            postPerfil = usuario.getPosts().stream()
+                .map(post -> {
+                    boolean isCurtido = postCurtidaRepository.findByPostIdAndUsuarioId(post.getId(), usuarioLogado.getId()).isPresent();
+
+                    return PostPerfilDetalheResponse.builder()
+                        .id(post.getId())
+                        .descricao(post.getDescricao())
+                        .dataCriacao(post.getDataCriacao())
+                        .curtido(isCurtido)
+                        .totalCurtidas(PostTotalDeCurtidaResponse.builder()
+                            .total(postCurtidaRepository.countByPost(post))
+                            .build())
+                        .totalComentarios(PostTotalDeComentarioResponse.builder()
+                            .total(postComentarioRepository.countByPost(post))
+                            .build())
+                        .comentarios(post.getComentarios().stream()
+                            .map(comentario -> PostComentarioResponse.builder()
+                                .id(comentario.getId())
+                                .descricao(comentario.getDescricao())
+                                .dataCriacao(comentario.getDataCriacao())
+                                .usuario(PostComentarioUsuarioDetalheResponse.builder()
+                                    .id(comentario.getUsuario().getId())
+                                    .nome(comentario.getUsuario().getNome())
+                                    .imagem(comentario.getUsuario().getImagem())
+                                    .tipoImagem(comentario.getUsuario().getTipoImagem())
+                                    .build())
+                                .build())
+                            .toList())
+                        .build();
+                })
                 .toList();
         }
 
-        return List.of();
+        UsuarioPerfilDetalheResponse perfil = UsuarioPerfilDetalheResponse.builder()
+            .nome(usuario.getNome())
+            .imagem(usuario.getImagem())
+            .tipoImagem(usuario.getTipoImagem())
+            .build();
+
+        return PostPerfilResponse.builder()
+            .usuario(perfil)
+            .posts(postPerfil)
+            .build();
     }
 
     public PostCurtidaResponse curtir(UUID postId) {

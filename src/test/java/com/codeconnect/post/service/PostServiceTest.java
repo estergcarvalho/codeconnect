@@ -3,6 +3,7 @@ package com.codeconnect.post.service;
 import com.codeconnect.post.dto.PostComentarioRequest;
 import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostCurtidaResponse;
+import com.codeconnect.post.dto.PostPerfilResponse;
 import com.codeconnect.post.dto.PostRecenteDetalheResponse;
 import com.codeconnect.post.dto.PostRecenteResponse;
 import com.codeconnect.post.dto.PostRequest;
@@ -227,11 +228,11 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Deve listar postagens do usuário logado ou de um amigo do usuario")
+    @DisplayName("Deve listar postagens do usuário logado ou de um amigo do usuário")
     public void deveListarPostagensUsuarioVisitado() {
         UUID idUsuario = UUID.randomUUID();
         UUID idUsuarioLogado = UUID.randomUUID();
-        String descricao = "post do usuário que esto visitando o seu perfil";
+        String descricao = "post do usuário que estou visitando o perfil";
         Timestamp dataCriacao = new Timestamp(System.currentTimeMillis());
 
         Usuario usuario = Usuario.builder()
@@ -241,6 +242,7 @@ public class PostServiceTest {
                     .id(UUID.randomUUID())
                     .dataCriacao(dataCriacao)
                     .descricao(descricao)
+                    .comentarios(new ArrayList<>())
                     .build()
             ))
             .build();
@@ -262,12 +264,12 @@ public class PostServiceTest {
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
         when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
 
-        List<PostResponse> postsUsuario = service.listarPostsUsuarioAmigo(idUsuario);
+        PostPerfilResponse postsUsuario = service.listarPostsUsuarioAmigo(idUsuario);
 
         assertNotNull(postsUsuario);
-        assertEquals(1, postsUsuario.size());
-        assertEquals(descricao, postsUsuario.getFirst().getDescricao());
-        assertEquals(dataCriacao, postsUsuario.getFirst().getDataCriacao());
+        assertEquals(1, postsUsuario.getPosts().size());
+        assertEquals(descricao, postsUsuario.getPosts().getFirst().getDescricao());
+        assertEquals(dataCriacao, postsUsuario.getPosts().getFirst().getDataCriacao());
     }
 
     @Test
