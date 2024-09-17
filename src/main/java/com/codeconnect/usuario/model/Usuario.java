@@ -1,5 +1,6 @@
 package com.codeconnect.usuario.model;
 
+import com.codeconnect.atividadeRecente.model.AtividadeRecente;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.redesocial.model.RedeSocial;
 import jakarta.persistence.CascadeType;
@@ -57,5 +58,8 @@ public class Usuario {
     private String imagem;
 
     private String tipoImagem;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AtividadeRecente> atividadeRecentes;
 
 }
