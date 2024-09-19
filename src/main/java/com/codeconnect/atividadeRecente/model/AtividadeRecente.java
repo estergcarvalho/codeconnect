@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
@@ -41,6 +41,6 @@ public class AtividadeRecente {
     @Enumerated(EnumType.ORDINAL)
     private AtividadeEnum atividade;
 
-    private Timestamp data_criacao;
+    private Timestamp dataCriacao;
 
 }
