@@ -1,6 +1,6 @@
-package com.codeconnect.atividadeRecente.model;
+package com.codeconnect.atividaderecente.model;
 
-import com.codeconnect.atividadeRecente.enums.AtividadeEnum;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.usuario.model.Usuario;
 import jakarta.persistence.Entity;
@@ -41,6 +41,6 @@ public class AtividadeRecente {
     @Enumerated(EnumType.ORDINAL)
     private AtividadeEnum atividade;
 
-    private Timestamp data_criacao;
+    private Timestamp dataCriacao;
 
 }

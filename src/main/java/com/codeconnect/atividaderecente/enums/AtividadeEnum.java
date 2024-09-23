@@ -1,4 +1,4 @@
-package com.codeconnect.atividadeRecente.enums;
+package com.codeconnect.atividaderecente.enums;
 
 public enum AtividadeEnum {
     CURTIDA,
