@@ -1,9 +1,9 @@
-package com.codeconnect.atividadeRecente.service;
+package com.codeconnect.atividaderecente.service;
 
-import com.codeconnect.atividadeRecente.dto.AtividadeRecenteRequest;
-import com.codeconnect.atividadeRecente.dto.AtividadeRecenteResponse;
-import com.codeconnect.atividadeRecente.model.AtividadeRecente;
-import com.codeconnect.atividadeRecente.repository.AtividadeRecenteRepository;
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteRequest;
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteResponse;
+import com.codeconnect.atividaderecente.model.AtividadeRecente;
+import com.codeconnect.atividaderecente.repository.AtividadeRecenteRepository;
 import com.codeconnect.post.exception.PostNaoEncontradoException;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.post.repository.PostRepository;
@@ -12,6 +12,7 @@ import com.codeconnect.usuario.model.Usuario;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.sql.Timestamp;
 import java.util.Optional;

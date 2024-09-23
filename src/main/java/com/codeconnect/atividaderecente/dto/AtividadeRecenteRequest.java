@@ -1,6 +1,6 @@
-package com.codeconnect.atividadeRecente.dto;
+package com.codeconnect.atividaderecente.dto;
 
-import com.codeconnect.atividadeRecente.enums.AtividadeEnum;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
-package com.codeconnect.atividadeRecente.controller;
+package com.codeconnect.atividaderecente.controller;
 
-import com.codeconnect.atividadeRecente.dto.AtividadeRecenteRequest;
-import com.codeconnect.atividadeRecente.dto.AtividadeRecenteResponse;
-import com.codeconnect.atividadeRecente.service.AtividadeRecenteService;
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteRequest;
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteResponse;
+import com.codeconnect.atividaderecente.service.AtividadeRecenteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

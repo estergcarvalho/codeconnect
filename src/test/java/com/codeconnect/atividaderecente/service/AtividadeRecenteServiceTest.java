@@ -1,10 +1,10 @@
-package com.codeconnect.atividadeRecente.service;
+package com.codeconnect.atividaderecente.service;
 
-import com.codeconnect.atividadeRecente.dto.AtividadeRecenteRequest;
-import com.codeconnect.atividadeRecente.dto.AtividadeRecenteResponse;
-import com.codeconnect.atividadeRecente.enums.AtividadeEnum;
-import com.codeconnect.atividadeRecente.model.AtividadeRecente;
-import com.codeconnect.atividadeRecente.repository.AtividadeRecenteRepository;
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteRequest;
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteResponse;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
+import com.codeconnect.atividaderecente.model.AtividadeRecente;
+import com.codeconnect.atividaderecente.repository.AtividadeRecenteRepository;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;

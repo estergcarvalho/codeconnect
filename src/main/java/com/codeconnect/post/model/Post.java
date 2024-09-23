@@ -1,6 +1,5 @@
 package com.codeconnect.post.model;
 
-import com.codeconnect.atividadeRecente.model.AtividadeRecente;
 import com.codeconnect.usuario.model.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -43,8 +42,5 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComentario> comentarios;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AtividadeRecente> atividadeRecentes;
 
 }

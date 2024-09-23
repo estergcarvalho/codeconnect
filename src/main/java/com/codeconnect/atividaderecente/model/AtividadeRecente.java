@@ -1,6 +1,6 @@
-package com.codeconnect.atividadeRecente.model;
+package com.codeconnect.atividaderecente.model;
 
-import com.codeconnect.atividadeRecente.enums.AtividadeEnum;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.usuario.model.Usuario;
 import jakarta.persistence.Entity;
@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 import java.sql.Timestamp;
 import java.util.UUID;

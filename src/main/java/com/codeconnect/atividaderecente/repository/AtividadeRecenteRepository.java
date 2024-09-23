@@ -1,7 +1,7 @@
-package com.codeconnect.atividadeRecente.repository;
+package com.codeconnect.atividaderecente.repository;
 
-import com.codeconnect.atividadeRecente.enums.AtividadeEnum;
-import com.codeconnect.atividadeRecente.model.AtividadeRecente;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
+import com.codeconnect.atividaderecente.model.AtividadeRecente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
