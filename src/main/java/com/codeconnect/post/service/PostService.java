@@ -1,5 +1,9 @@
 package com.codeconnect.post.service;
 
+import com.codeconnect.atividaderecente.dto.AtividadeRecenteRequest;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
+import com.codeconnect.atividaderecente.model.AtividadeRecente;
+import com.codeconnect.atividaderecente.service.AtividadeRecenteService;
 import com.codeconnect.post.dto.PostComentarioRequest;
 import com.codeconnect.post.dto.PostComentarioResponse;
 import com.codeconnect.post.dto.PostComentarioUsuarioDetalheResponse;
@@ -57,6 +61,9 @@ public class PostService {
 
     @Autowired
     private PostComentarioRepository postComentarioRepository;
+
+    @Autowired
+    private AtividadeRecenteService atividadeRecenteService;
 
     public PostResponse cadastrar(PostRequest postRequest) {
         log.info("Iniciando cadastro da postagem");
@@ -259,6 +266,13 @@ public class PostService {
 
         postCurtidaRepository.save(postCurtida);
 
+        AtividadeRecenteRequest atividadeRecenteRequest = AtividadeRecenteRequest.builder()
+            .postId(postCurtida.getPost().getId())
+            .atividade(AtividadeEnum.CURTIDA)
+            .build();
+
+        atividadeRecenteService.cadastrar(atividadeRecenteRequest);
+
         return PostCurtidaResponse.builder()
             .id(postCurtida.getId())
             .build();
@@ -323,6 +337,13 @@ public class PostService {
             .build();
 
         postComentarioRepository.save(comentario);
+
+        AtividadeRecenteRequest atividadeRecenteRequest = AtividadeRecenteRequest.builder()
+            .postId(comentario.getPost().getId())
+            .atividade(AtividadeEnum.COMENTARIO)
+            .build();
+
+        atividadeRecenteService.cadastrar(atividadeRecenteRequest);
 
         return PostComentarioResponse.builder()
             .id(comentario.getId())
