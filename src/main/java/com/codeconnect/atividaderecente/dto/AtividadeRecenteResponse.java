@@ -24,8 +24,7 @@ public class AtividadeRecenteResponse {
     private String nome;
 
     @Schema(description = "Tipo de atividade realizada pelo usuário, como Curtida, Comentário ou Compartilhamento.")
-    @JsonProperty("atividade_enum")
-    private AtividadeEnum atividadeEnum;
+    private AtividadeEnum atividade;
 
     @Schema(description = "Data de criação postagem usuário", example = "2024-06-13T18:50:09.719+00:00")
     @JsonProperty("data_criacao")

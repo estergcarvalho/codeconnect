@@ -50,7 +50,7 @@ public class AtividadeRecenteService {
                 .id(atividadeExistente.get().getId())
                 .nome(usuario.getNome())
                 .dataCriacao(atividadeExistente.get().getDataCriacao())
-                .atividadeEnum(atividadeExistente.get().getAtividade())
+                .atividade(atividadeExistente.get().getAtividade())
                 .build();
         }
 
@@ -67,7 +67,7 @@ public class AtividadeRecenteService {
         return AtividadeRecenteResponse.builder()
             .id(atividadeRecente.getId())
             .nome(usuario.getNome())
-            .atividadeEnum(atividadeRecente.getAtividade())
+            .atividade(atividadeRecente.getAtividade())
             .dataCriacao(atividadeRecente.getDataCriacao())
             .build();
     }
