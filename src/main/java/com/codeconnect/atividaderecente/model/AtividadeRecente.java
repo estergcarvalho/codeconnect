@@ -16,7 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.security.Timestamp;
+
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
