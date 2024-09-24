@@ -31,7 +31,7 @@ public class AtividadeRecenteController {
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
         }
     )
-    @PostMapping("/cadastrar")
+    @PostMapping
     public ResponseEntity<AtividadeRecenteResponse> cadastrar(@RequestBody AtividadeRecenteRequest atividadeRecenteRequest) {
         AtividadeRecenteResponse atividadeRecenteResponse = service.cadastrar(atividadeRecenteRequest);
 
