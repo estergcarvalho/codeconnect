@@ -40,7 +40,7 @@ public class AtividadeRecenteService {
             .orElseThrow(PostNaoEncontradoException::new);
 
         Optional<AtividadeRecente> atividadeExistente = repository.findByUsuarioIdAndPostIdAndAtividade(
-            usuario.getId(), post.getId(), atividadeRecenteRequest.getAtividadeEnum()
+            usuario.getId(), post.getId(), atividadeRecenteRequest.getAtividade()
         );
 
         if (atividadeExistente.isPresent()) {
@@ -58,7 +58,7 @@ public class AtividadeRecenteService {
             .id(UUID.randomUUID())
             .usuario(usuario)
             .post(post)
-            .atividade(atividadeRecenteRequest.getAtividadeEnum())
+            .atividade(atividadeRecenteRequest.getAtividade())
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .build();
 

@@ -74,12 +74,12 @@ public class AtividadeRecenteServiceTest {
             .build();
 
         AtividadeRecenteRequest atividadeRecenteRequest = AtividadeRecenteRequest.builder()
-            .atividadeEnum(AtividadeEnum.CURTIDA)
+            .atividade(AtividadeEnum.CURTIDA)
             .postId(postId)
             .build();
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
-        when(repository.findByUsuarioIdAndPostIdAndAtividade(usuarioId, postId, atividadeRecenteRequest.getAtividadeEnum())).thenReturn(Optional.empty());
+        when(repository.findByUsuarioIdAndPostIdAndAtividade(usuarioId, postId, atividadeRecenteRequest.getAtividade())).thenReturn(Optional.empty());
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(repository.save(any(AtividadeRecente.class))).thenReturn(atividadeRecenteSalvo);
 
@@ -118,12 +118,12 @@ public class AtividadeRecenteServiceTest {
             .build();
 
         AtividadeRecenteRequest atividadeRecenteRequest = AtividadeRecenteRequest.builder()
-            .atividadeEnum(AtividadeEnum.CURTIDA)
+            .atividade(AtividadeEnum.CURTIDA)
             .postId(postId)
             .build();
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuario);
-        when(repository.findByUsuarioIdAndPostIdAndAtividade(usuarioId, postId, atividadeRecenteRequest.getAtividadeEnum())).thenReturn(Optional.of(atividadeRecenteSalvo));
+        when(repository.findByUsuarioIdAndPostIdAndAtividade(usuarioId, postId, atividadeRecenteRequest.getAtividade())).thenReturn(Optional.of(atividadeRecenteSalvo));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(repository.save(any(AtividadeRecente.class))).thenReturn(atividadeRecenteSalvo);
 
