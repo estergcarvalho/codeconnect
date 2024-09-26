@@ -8,7 +8,9 @@ import com.codeconnect.atividaderecente.repository.AtividadeRecenteRepository;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
+import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.model.UsuarioAmigo;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -18,10 +20,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -60,7 +65,6 @@ public class AtividadeRecenteServiceTest {
 
         Post post = Post.builder()
             .id(postId)
-            .atividadeRecentes(new ArrayList<>())
             .usuario(usuario)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .build();
@@ -104,7 +108,6 @@ public class AtividadeRecenteServiceTest {
 
         Post post = Post.builder()
             .id(postId)
-            .atividadeRecentes(new ArrayList<>())
             .usuario(usuario)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .build();
@@ -131,6 +134,44 @@ public class AtividadeRecenteServiceTest {
 
         assertNotNull(atividadeRecenteResponse);
         verify(repository, never()).save(any(AtividadeRecente.class));
+    }
+
+    @Test
+    @DisplayName("Deve listar atividades recentes do usuário e amigos")
+    public void deveListarAtividadesComAmigos() {
+        UUID usuarioId = UUID.randomUUID();
+        UUID atividadeId = UUID.randomUUID();
+
+        Usuario usuarioLogado = Usuario.builder()
+            .id(usuarioId)
+            .nome("Joao")
+            .amigos(Collections.singletonList(
+                UsuarioAmigo.builder()
+                    .id(usuarioId)
+                    .status(UsuarioAmigoStatusEnum.AMIGO)
+                    .build()
+            ))
+            .build();
+
+        AtividadeRecente atividade = AtividadeRecente.builder()
+            .id(atividadeId)
+            .atividade(AtividadeEnum.CURTIDA)
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .usuario(usuarioLogado)
+            .build();
+
+        when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
+        when(repository.findByUsuarioIdAndAtividadeIn(usuarioId,
+            Arrays.asList(AtividadeEnum.CURTIDA, AtividadeEnum.COMENTARIO)))
+            .thenReturn(Collections.singletonList(atividade));
+
+        List<AtividadeRecenteResponse> atividadesRecentes = service.listar();
+
+        assertNotNull(atividadesRecentes);
+        assertEquals(1, atividadesRecentes.size());
+        assertEquals(atividadeId, atividadesRecentes.getFirst().getId());
+        assertEquals(AtividadeEnum.CURTIDA, atividadesRecentes.getFirst().getAtividade());
+        assertEquals("Joao", atividadesRecentes.getFirst().getNome());
     }
 
 }

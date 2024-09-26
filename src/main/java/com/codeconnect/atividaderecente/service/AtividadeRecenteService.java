@@ -2,19 +2,25 @@ package com.codeconnect.atividaderecente.service;
 
 import com.codeconnect.atividaderecente.dto.AtividadeRecenteRequest;
 import com.codeconnect.atividaderecente.dto.AtividadeRecenteResponse;
+import com.codeconnect.atividaderecente.enums.AtividadeEnum;
 import com.codeconnect.atividaderecente.model.AtividadeRecente;
 import com.codeconnect.atividaderecente.repository.AtividadeRecenteRepository;
 import com.codeconnect.post.exception.PostNaoEncontradoException;
 import com.codeconnect.post.model.Post;
 import com.codeconnect.post.repository.PostRepository;
 import com.codeconnect.security.service.TokenService;
+import com.codeconnect.usuario.enums.UsuarioAmigoStatusEnum;
 import com.codeconnect.usuario.model.Usuario;
+import com.codeconnect.usuario.model.UsuarioAmigo;
+import com.codeconnect.usuario.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +36,9 @@ public class AtividadeRecenteService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public AtividadeRecenteResponse cadastrar(AtividadeRecenteRequest atividadeRecenteRequest) {
         log.info("Iniciando o cadastro da atividade recente");
@@ -70,6 +79,38 @@ public class AtividadeRecenteService {
             .atividade(atividadeRecente.getAtividade())
             .dataCriacao(atividadeRecente.getDataCriacao())
             .build();
+    }
+
+    public List<AtividadeRecenteResponse> listar() {
+        log.info("Iniciando a listagem de atividades recentes");
+
+        Usuario usuarioLogado = tokenService.obterUsuarioToken();
+
+        boolean isAmigoUsuario = false;
+        for (UsuarioAmigo usuarioAmigo : usuarioLogado.getAmigos()) {
+            if (usuarioAmigo.getId().equals(
+                usuarioLogado.getId()) && usuarioAmigo.getStatus() == UsuarioAmigoStatusEnum.AMIGO) {
+                isAmigoUsuario = true;
+                break;
+            }
+        }
+
+        List<AtividadeRecenteResponse> atividadesRecentes = new ArrayList<>();
+
+        if (isAmigoUsuario || usuarioLogado.getId().equals(usuarioLogado.getId())) {
+            List<AtividadeEnum> atividades = Arrays.asList(AtividadeEnum.CURTIDA, AtividadeEnum.COMENTARIO);
+
+            atividadesRecentes = repository.findByUsuarioIdAndAtividadeIn(usuarioLogado.getId(), atividades).stream()
+                .map(atividade -> AtividadeRecenteResponse.builder()
+                    .id(atividade.getId())
+                    .atividade(atividade.getAtividade())
+                    .nome(usuarioLogado.getNome())
+                    .dataCriacao(atividade.getDataCriacao())
+                    .build())
+                .toList();
+        }
+
+        return atividadesRecentes;
     }
 
 }
