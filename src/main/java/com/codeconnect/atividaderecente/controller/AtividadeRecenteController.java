@@ -55,6 +55,5 @@ public class AtividadeRecenteController {
 
         return ResponseEntity.ok(atividadesRecentes);
     }
-
     
 }
