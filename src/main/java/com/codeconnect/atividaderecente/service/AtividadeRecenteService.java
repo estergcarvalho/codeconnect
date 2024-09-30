@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -86,31 +87,30 @@ public class AtividadeRecenteService {
 
         Usuario usuarioLogado = tokenService.obterUsuarioToken();
 
-        boolean isAmigoUsuario = false;
-        for (UsuarioAmigo usuarioAmigo : usuarioLogado.getAmigos()) {
-            if (usuarioAmigo.getId().equals(
-                usuarioLogado.getId()) && usuarioAmigo.getStatus() == UsuarioAmigoStatusEnum.AMIGO) {
-                isAmigoUsuario = true;
-                break;
-            }
+        List<UsuarioAmigo> amigos = usuarioLogado.getAmigos().stream()
+            .filter(usuarioAmigo -> usuarioAmigo.getStatus() == UsuarioAmigoStatusEnum.AMIGO)
+            .toList();
+
+        List<UUID> usuariosAtividades = new ArrayList<>(amigos.stream()
+            .map(usuarioAmigo -> usuarioAmigo.getAmigo().getId())
+            .toList());
+        usuariosAtividades.add(usuarioLogado.getId());
+
+        List<AtividadeRecente> atividadesRecentes = repository.findByUsuarioIdIn(usuariosAtividades);
+
+        if (atividadesRecentes.isEmpty()) {
+            log.info("Não existe nenhuma atividade recente");
+            return Collections.emptyList();
         }
 
-        List<AtividadeRecenteResponse> atividadesRecentes = new ArrayList<>();
-
-        if (isAmigoUsuario || usuarioLogado.getId().equals(usuarioLogado.getId())) {
-            List<AtividadeEnum> atividades = Arrays.asList(AtividadeEnum.CURTIDA, AtividadeEnum.COMENTARIO);
-
-            atividadesRecentes = repository.findByUsuarioIdAndAtividadeIn(usuarioLogado.getId(), atividades).stream()
-                .map(atividade -> AtividadeRecenteResponse.builder()
-                    .id(atividade.getId())
-                    .atividade(atividade.getAtividade())
-                    .nome(usuarioLogado.getNome())
-                    .dataCriacao(atividade.getDataCriacao())
-                    .build())
-                .toList();
-        }
-
-        return atividadesRecentes;
+        return atividadesRecentes.stream()
+            .map(atividade -> AtividadeRecenteResponse.builder()
+                .id(atividade.getId())
+                .nome(atividade.getUsuario().getNome())
+                .atividade(atividade.getAtividade())
+                .dataCriacao(atividade.getDataCriacao())
+                .build())
+            .toList();
     }
 
 }

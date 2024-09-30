@@ -29,6 +29,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -140,6 +141,7 @@ public class AtividadeRecenteServiceTest {
     @DisplayName("Deve listar atividades recentes do usuário e amigos")
     public void deveListarAtividadesComAmigos() {
         UUID usuarioId = UUID.randomUUID();
+        UUID amigoId = UUID.randomUUID();
         UUID atividadeId = UUID.randomUUID();
 
         Usuario usuarioLogado = Usuario.builder()
@@ -147,31 +149,48 @@ public class AtividadeRecenteServiceTest {
             .nome("Joao")
             .amigos(Collections.singletonList(
                 UsuarioAmigo.builder()
-                    .id(usuarioId)
+                    .id(UUID.randomUUID())
+                    .amigo(Usuario.builder().id(amigoId).nome("Maria").build())
                     .status(UsuarioAmigoStatusEnum.AMIGO)
                     .build()
             ))
             .build();
 
-        AtividadeRecente atividade = AtividadeRecente.builder()
+        AtividadeRecente atividade1 = AtividadeRecente.builder()
             .id(atividadeId)
             .atividade(AtividadeEnum.CURTIDA)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .usuario(usuarioLogado)
             .build();
 
+        AtividadeRecente comentario = AtividadeRecente.builder()
+            .id(atividadeId)
+            .atividade(AtividadeEnum.COMENTARIO)
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .usuario(usuarioLogado)
+            .build();
+
+        AtividadeRecente compatilhamento = AtividadeRecente.builder()
+            .id(atividadeId)
+            .atividade(AtividadeEnum.COMPARTILHAMENTO)
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .usuario(usuarioLogado)
+            .build();
+
+        List<AtividadeRecente> atividadesUsuarios = Arrays.asList(atividade1, comentario, compatilhamento);
+
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
-        when(repository.findByUsuarioIdAndAtividadeIn(usuarioId,
-            Arrays.asList(AtividadeEnum.CURTIDA, AtividadeEnum.COMENTARIO)))
-            .thenReturn(Collections.singletonList(atividade));
+        when(repository.findByUsuarioIdIn(anyList())).thenReturn((atividadesUsuarios));
 
         List<AtividadeRecenteResponse> atividadesRecentes = service.listar();
 
         assertNotNull(atividadesRecentes);
-        assertEquals(1, atividadesRecentes.size());
+        assertEquals(3, atividadesRecentes.size());
         assertEquals(atividadeId, atividadesRecentes.getFirst().getId());
         assertEquals(AtividadeEnum.CURTIDA, atividadesRecentes.getFirst().getAtividade());
         assertEquals("Joao", atividadesRecentes.getFirst().getNome());
+
+        verify(repository, times(1)).findByUsuarioIdIn(anyList());
     }
 
 }

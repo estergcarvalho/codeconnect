@@ -14,6 +14,6 @@ public interface AtividadeRecenteRepository extends JpaRepository<AtividadeRecen
 
     Optional<AtividadeRecente> findByUsuarioIdAndPostIdAndAtividade(UUID usuarioId, UUID postId, AtividadeEnum atividadeEnum);
 
-    List<AtividadeRecente> findByUsuarioIdAndAtividadeIn(UUID usuarioId, List<AtividadeEnum> atividades);
+    List<AtividadeRecente> findByUsuarioIdIn( List<UUID> usuarioId);
 
 }
