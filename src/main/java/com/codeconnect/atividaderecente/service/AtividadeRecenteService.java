@@ -100,6 +100,7 @@ public class AtividadeRecenteService {
 
         if (atividadesRecentes.isEmpty()) {
             log.info("Não existe nenhuma atividade recente");
+            
             return Collections.emptyList();
         }
 
