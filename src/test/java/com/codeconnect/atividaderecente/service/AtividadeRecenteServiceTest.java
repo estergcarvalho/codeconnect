@@ -143,6 +143,7 @@ public class AtividadeRecenteServiceTest {
         UUID usuarioId = UUID.randomUUID();
         UUID amigoId = UUID.randomUUID();
         UUID atividadeId = UUID.randomUUID();
+        UUID postId = UUID.randomUUID();
 
         Usuario usuarioLogado = Usuario.builder()
             .id(usuarioId)
@@ -156,31 +157,40 @@ public class AtividadeRecenteServiceTest {
             ))
             .build();
 
+        Post post = Post.builder()
+            .id(postId)
+            .descricao("Oi devs")
+            .dataCriacao(new Timestamp(System.currentTimeMillis()))
+            .build();
+
         AtividadeRecente atividade1 = AtividadeRecente.builder()
             .id(atividadeId)
             .atividade(AtividadeEnum.CURTIDA)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .usuario(usuarioLogado)
+            .post(post)
             .build();
 
         AtividadeRecente comentario = AtividadeRecente.builder()
-            .id(atividadeId)
+            .id(UUID.randomUUID())
             .atividade(AtividadeEnum.COMENTARIO)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .usuario(usuarioLogado)
+            .post(post)
             .build();
 
-        AtividadeRecente compatilhamento = AtividadeRecente.builder()
-            .id(atividadeId)
+        AtividadeRecente compartilhamento = AtividadeRecente.builder()
+            .id(UUID.randomUUID())
             .atividade(AtividadeEnum.COMPARTILHAMENTO)
             .dataCriacao(new Timestamp(System.currentTimeMillis()))
             .usuario(usuarioLogado)
+            .post(post)
             .build();
 
-        List<AtividadeRecente> atividadesUsuarios = Arrays.asList(atividade1, comentario, compatilhamento);
+        List<AtividadeRecente> atividadesUsuarios = Arrays.asList(atividade1, comentario, compartilhamento);
 
         when(tokenService.obterUsuarioToken()).thenReturn(usuarioLogado);
-        when(repository.findByUsuarioIdIn(anyList())).thenReturn((atividadesUsuarios));
+        when(repository.findByUsuarioIdIn(anyList())).thenReturn(atividadesUsuarios);
 
         List<AtividadeRecenteResponse> atividadesRecentes = service.listar();
 

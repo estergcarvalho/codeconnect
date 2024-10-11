@@ -107,6 +107,7 @@ public class AtividadeRecenteService {
         return atividadesRecentes.stream()
             .map(atividade -> AtividadeRecenteResponse.builder()
                 .id(atividade.getId())
+                .postId(atividade.getPost().getId())
                 .nome(atividade.getUsuario().getNome())
                 .atividade(atividade.getAtividade())
                 .dataCriacao(atividade.getDataCriacao())
