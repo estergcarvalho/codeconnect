@@ -20,6 +20,10 @@ public class AtividadeRecenteResponse {
     @Schema(description = "Id usuário", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
     private UUID id;
 
+    @Schema(description = "Id do post do usuário", example = "b2adf87b-b98a-49e3-af3f-57f8e5ac467d")
+    @JsonProperty("post_id")
+    private UUID postId;
+
     @Schema(description = "Nome do usuário", example = "João")
     private String nome;
 

@@ -5,6 +5,7 @@ import com.codeconnect.atividaderecente.model.AtividadeRecente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,5 +13,7 @@ import java.util.UUID;
 public interface AtividadeRecenteRepository extends JpaRepository<AtividadeRecente, UUID> {
 
     Optional<AtividadeRecente> findByUsuarioIdAndPostIdAndAtividade(UUID usuarioId, UUID postId, AtividadeEnum atividadeEnum);
+
+    List<AtividadeRecente> findByUsuarioIdIn( List<UUID> usuarioId);
 
 }
