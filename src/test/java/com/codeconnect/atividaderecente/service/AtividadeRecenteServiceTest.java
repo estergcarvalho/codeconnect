@@ -148,6 +148,8 @@ public class AtividadeRecenteServiceTest {
         Usuario usuarioLogado = Usuario.builder()
             .id(usuarioId)
             .nome("Joao")
+            .imagem("imagem")
+            .tipoImagem("image/png")
             .amigos(Collections.singletonList(
                 UsuarioAmigo.builder()
                     .id(UUID.randomUUID())
