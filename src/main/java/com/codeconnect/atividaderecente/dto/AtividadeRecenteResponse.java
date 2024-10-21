@@ -34,4 +34,7 @@ public class AtividadeRecenteResponse {
     @JsonProperty("data_criacao")
     private Timestamp dataCriacao;
 
+    @Schema(description = "Imagem do perfil do usuário", example = "R0lGODlhkAGQAfcAAAIAAQwBAQwECBMDAxoFAxwLBBwLDBY...")
+    private String imagem;
+
 }

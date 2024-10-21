@@ -111,6 +111,7 @@ public class AtividadeRecenteService {
                 .nome(atividade.getUsuario().getNome())
                 .atividade(atividade.getAtividade())
                 .dataCriacao(atividade.getDataCriacao())
+                .imagem(atividade.getUsuario().getImagem())
                 .build())
             .toList();
     }
